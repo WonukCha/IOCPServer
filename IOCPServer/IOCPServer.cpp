@@ -3,12 +3,12 @@
 
 IOCPServer::IOCPServer(void)
 {
-
 }
 
 IOCPServer::~IOCPServer(void)
 {
 	WSACleanup();
+
 }
 
 bool IOCPServer::Init(unsigned int MaxThreadCount)
@@ -85,4 +85,69 @@ bool IOCPServer::BindListen(unsigned short port)
 
 
 	return bFuncResult;
+}
+
+bool IOCPServer::StartServer(const unsigned int MaxClientCount)
+{
+	bool bResult = false;
+
+
+	CreateClient(MaxClientCount);
+
+
+	for (unsigned int i =0;i< MAX_WORK_THREAD_COUNT;i++)
+	{
+		mWorkThread.emplace_back(std::thread([this]() {this->WorkThread(); }));
+	}
+
+	mAcceptThread = std::thread([this]() {this->AcceptThread(); });
+
+	bResult = true;
+
+	return bResult;
+}
+
+void IOCPServer::DestroyThread()
+{
+	mIsWorkerRun = false;
+	CloseHandle(mIOCPHandle);
+
+	for (auto& i : mWorkThread)
+	{
+		if (i.joinable())
+		{
+			i.join();
+		}
+	}
+
+	//Accepter 쓰레드를 종요한다.
+	mIsAcceptRun = false;
+	closesocket(mListenSocket);
+
+	if (mAcceptThread.joinable())
+	{
+		mAcceptThread.join();
+	}
+}
+
+void IOCPServer::CreateClient(const unsigned int MaxClientCount)
+{
+
+}
+
+void IOCPServer::WorkThread()
+{
+	while (true)
+	{
+		if (mIsWorkerRun == false)
+			break;
+	}
+}
+void IOCPServer::AcceptThread()
+{
+	while (true)
+	{
+		if (mIsAcceptRun == false)
+			break;
+	}
 }
