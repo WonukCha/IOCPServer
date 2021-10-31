@@ -5,13 +5,17 @@
 #include <winsock2.h>
 #include <Ws2tcpip.h>
 #include <mswsock.h>
-#include <iostream>
 
+#include <iostream>
 #include <thread>
 #include <vector>
 #include <thread>
 
-#define MAX_WORK_THREAD_COUNT 5
+#include "ClientInfo.h"
+#include "define.h"
+
+
+constexpr UINT MAX_WORK_THREAD_COUNT = 5;
 
 class IOCPServer
 {
@@ -26,17 +30,19 @@ public:
 	void DestroyThread();
 
 private:
+	void CreateClient(const unsigned int MaxClientCount);
+	void WorkThread();
+	void AcceptThread();
+
 	unsigned int mMaxIocpWorkerThreadCount = 0;
+	std::vector<ClientInfo*> mClientInfos;
 	SOCKET	mListenSocket = INVALID_SOCKET;
 	HANDLE	mIOCPHandle = INVALID_HANDLE_VALUE;
-	std::vector<std::thread> mWorkThread;
+	std::thread mWorkThread[MAX_WORK_THREAD_COUNT];
 	std::thread mAcceptThread;
 	bool mIsWorkerRun = true;
 	bool mIsAcceptRun = true;
 
-	void CreateClient(const unsigned int MaxClientCount);
-	void WorkThread();
-	void AcceptThread();
 };
 
 

@@ -91,13 +91,11 @@ bool IOCPServer::StartServer(const unsigned int MaxClientCount)
 {
 	bool bResult = false;
 
-
 	CreateClient(MaxClientCount);
 
-
-	for (unsigned int i =0;i< MAX_WORK_THREAD_COUNT;i++)
+	for (unsigned int i = 0; i < MAX_WORK_THREAD_COUNT; i++)
 	{
-		mWorkThread.emplace_back(std::thread([this]() {this->WorkThread(); }));
+		mWorkThread[i] = std::thread([this]() {this->WorkThread(); });
 	}
 
 	mAcceptThread = std::thread([this]() {this->AcceptThread(); });
@@ -112,11 +110,11 @@ void IOCPServer::DestroyThread()
 	mIsWorkerRun = false;
 	CloseHandle(mIOCPHandle);
 
-	for (auto& i : mWorkThread)
+	for (auto& thread : mWorkThread)
 	{
-		if (i.joinable())
+		if (thread.joinable())
 		{
-			i.join();
+			thread.join();
 		}
 	}
 
@@ -132,7 +130,12 @@ void IOCPServer::DestroyThread()
 
 void IOCPServer::CreateClient(const unsigned int MaxClientCount)
 {
-
+	for (unsigned int i = 0; i < MaxClientCount; i++)
+	{
+		auto client = new ClientInfo();
+		client->Init(i, mIOCPHandle);
+		mClientInfos.push_back(client);
+	}
 }
 
 void IOCPServer::WorkThread()
@@ -141,6 +144,8 @@ void IOCPServer::WorkThread()
 	{
 		if (mIsWorkerRun == false)
 			break;
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
 void IOCPServer::AcceptThread()
@@ -149,5 +154,7 @@ void IOCPServer::AcceptThread()
 	{
 		if (mIsAcceptRun == false)
 			break;
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }

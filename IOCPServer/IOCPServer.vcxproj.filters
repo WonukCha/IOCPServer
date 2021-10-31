@@ -21,6 +21,12 @@
     <ClInclude Include="IOCPServer.h">
       <Filter>소스 파일\IOCPServer</Filter>
     </ClInclude>
+    <ClInclude Include="ClientInfo.h">
+      <Filter>소스 파일\IOCPServer</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>소스 파일\IOCPServer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IOCPServer.cpp">
@@ -28,6 +34,9 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientInfo.cpp">
+      <Filter>소스 파일\IOCPServer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
