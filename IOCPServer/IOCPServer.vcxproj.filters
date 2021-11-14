@@ -27,6 +27,9 @@
     <ClInclude Include="Define.h">
       <Filter>소스 파일\IOCPServer</Filter>
     </ClInclude>
+    <ClInclude Include="RingBufferLock.hpp">
+      <Filter>소스 파일\IOCPServer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IOCPServer.cpp">

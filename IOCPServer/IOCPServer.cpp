@@ -1,5 +1,5 @@
 #include "IOCPServer.h"
-
+#include "ClientInfo.h"
 
 IOCPServer::IOCPServer(void)
 {
@@ -10,6 +10,10 @@ IOCPServer::~IOCPServer(void)
 	WSACleanup();
 
 }
+
+void IOCPServer::OnConnect(unsigned int clientIndx) {};
+void IOCPServer::OnClose(unsigned int clientIndx) {};
+void IOCPServer::OnReceive(unsigned int clientIndx) {};
 
 bool IOCPServer::Init(unsigned int MaxThreadCount)
 {
@@ -118,7 +122,6 @@ void IOCPServer::DestroyThread()
 		}
 	}
 
-	//Accepter 쓰레드를 종요한다.
 	mIsAcceptRun = false;
 	closesocket(mListenSocket);
 
@@ -140,11 +143,57 @@ void IOCPServer::CreateClient(const unsigned int MaxClientCount)
 
 void IOCPServer::WorkThread()
 {
+	ClientInfo* pClientInfo = nullptr;
+	BOOL bSuccess = TRUE;
+	DWORD dwIoSize = 0;
+	LPOVERLAPPED lpOverlapped = NULL;
+
 	while (true)
 	{
 		if (mIsWorkerRun == false)
 			break;
 
+		bSuccess = GetQueuedCompletionStatus(
+			mIOCPHandle,
+			&dwIoSize,
+			(ULONG_PTR*)pClientInfo,
+			&lpOverlapped,
+			INFINITE);
+
+		if (TRUE == bSuccess && 0 == dwIoSize && NULL == lpOverlapped)
+		{
+			mIsWorkerRun = false;
+			continue;
+		}
+
+		if (NULL == lpOverlapped)
+		{
+			continue;
+		}
+
+		stOverlappedEx* pOverlappedEx = (stOverlappedEx*)lpOverlapped;
+
+		if (FALSE == bSuccess || (0 == dwIoSize && IOOperation::ACCEPT != pOverlappedEx->m_eOperation))
+		{
+			CloseSocket(pClientInfo);
+			continue;
+		}
+
+		if (IOOperation::ACCEPT == pOverlappedEx->m_eOperation)
+		{
+			pClientInfo = GetClientInfo(pOverlappedEx->SessionIndex);
+			if (pClientInfo->AcceptCompletion())
+			{
+				//++mClientCnt;
+
+				OnConnect(pClientInfo->GetClientIndex());
+			}
+			else
+			{
+				CloseSocket(pClientInfo); 
+			}
+		}
+		
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
@@ -154,7 +203,63 @@ void IOCPServer::AcceptThread()
 	{
 		if (mIsAcceptRun == false)
 			break;
+		auto curTimeSec = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		for (auto client : mClientInfos)
+		{
+			if (client->IsConnect())
+			{
+				continue;
+			}
+
+			if ((UINT64)curTimeSec < client->GetLatestClosedTimeSec())
+			{
+				continue;
+			}
+
+			auto diff = curTimeSec - client->GetLatestClosedTimeSec();
+			if (diff <= RE_USE_SESSION_WAIT_TIMESEC)
+			{
+				continue;
+			}
+
+			client->PostAccept(mListenSocket, curTimeSec);
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(32));
 	}
+}
+
+ClientInfo* IOCPServer::GetClientInfo(unsigned int index)
+{
+	ClientInfo* pClinetInfo = nullptr;
+	do
+	{
+		if (index > mClientInfos.size() -1)
+			break;
+		pClinetInfo = mClientInfos[index];
+
+	} while (false);
+
+	return pClinetInfo;
+}
+void IOCPServer::CloseSocket(ClientInfo* clientInfo, bool bLingerOn)
+{
+	do
+	{
+		if (clientInfo == nullptr)
+			break;
+
+		if (clientInfo->IsConnect() == false)
+			break;
+
+		unsigned int index = clientInfo->GetClientIndex();
+		
+		clientInfo->Close();
+
+		//--mClientCnt;
+
+		OnClose(index);
+
+	} while (false);
 }
