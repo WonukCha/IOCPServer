@@ -13,7 +13,7 @@ IOCPServer::~IOCPServer(void)
 
 void IOCPServer::OnConnect(unsigned int clientIndx) {};
 void IOCPServer::OnClose(unsigned int clientIndx) {};
-void IOCPServer::OnReceive(unsigned int clientIndx) {};
+void IOCPServer::OnReceive(unsigned int clientIndx, const unsigned int size, char* pData) {};
 
 bool IOCPServer::Init(unsigned int MaxThreadCount)
 {
@@ -156,7 +156,7 @@ void IOCPServer::WorkThread()
 		bSuccess = GetQueuedCompletionStatus(
 			mIOCPHandle,
 			&dwIoSize,
-			(ULONG_PTR*)pClientInfo,
+			(PULONG_PTR)&pClientInfo,
 			&lpOverlapped,
 			INFINITE);
 
@@ -178,10 +178,13 @@ void IOCPServer::WorkThread()
 			CloseSocket(pClientInfo);
 			continue;
 		}
-
-		if (IOOperation::ACCEPT == pOverlappedEx->m_eOperation)
+		 
+		switch (pOverlappedEx->m_eOperation)
+		{
+		case IOOperation::ACCEPT:
 		{
 			pClientInfo = GetClientInfo(pOverlappedEx->SessionIndex);
+
 			if (pClientInfo->AcceptCompletion())
 			{
 				//++mClientCnt;
@@ -190,11 +193,25 @@ void IOCPServer::WorkThread()
 			}
 			else
 			{
-				CloseSocket(pClientInfo); 
+				CloseSocket(pClientInfo);
 			}
+
+			break;
 		}
-		
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		case IOOperation::RECV:
+		{
+			OnReceive(pClientInfo->GetClientIndex(),dwIoSize, pClientInfo->RecvBuffer());
+			//여기에 링버퍼로 처리?
+			pClientInfo->BindRecv();
+			break;
+		}
+		case IOOperation::SEND:
+		{
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }
 void IOCPServer::AcceptThread()

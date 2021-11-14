@@ -171,3 +171,7 @@ bool ClientInfo::PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_)
 
 	return bResult;
 }
+char* ClientInfo::RecvBuffer()
+{
+	return mRecvBuf;
+}

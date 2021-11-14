@@ -22,6 +22,7 @@ public:
 	bool BindRecv();
 	UINT64 GetLatestClosedTimeSec();
 	bool PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_);
+	char* RecvBuffer();
 protected:
 
 private:
