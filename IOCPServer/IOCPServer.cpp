@@ -13,7 +13,7 @@ IOCPServer::~IOCPServer(void)
 
 void IOCPServer::OnConnect(unsigned int clientIndx) {};
 void IOCPServer::OnClose(unsigned int clientIndx) {};
-void IOCPServer::OnReceive(unsigned int clientIndx, const unsigned int size, char* pData) {};
+void IOCPServer::OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf) {};
 
 bool IOCPServer::Init(unsigned int MaxThreadCount)
 {
@@ -137,7 +137,7 @@ void IOCPServer::CreateClient(const unsigned int MaxClientCount)
 	{
 		auto client = new ClientInfo();
 		client->Init(i, mIOCPHandle);
-		mClientInfos.push_back(client);
+		mClientInfos.emplace_back(std::move(client));
 	}
 }
 
@@ -178,7 +178,7 @@ void IOCPServer::WorkThread()
 			CloseSocket(pClientInfo);
 			continue;
 		}
-		 
+
 		switch (pOverlappedEx->m_eOperation)
 		{
 		case IOOperation::ACCEPT:
@@ -200,17 +200,25 @@ void IOCPServer::WorkThread()
 		}
 		case IOOperation::RECV:
 		{
-			OnReceive(pClientInfo->GetClientIndex(),dwIoSize, pClientInfo->RecvBuffer());
-			//여기에 링버퍼로 처리?
+			//TODO
+			//여기에 락버퍼가 필요한가?
+			//2개의 스레드가 접근이 없는데 필요한건인가?
+			//링 바이트 버퍼로 만들고 락은 제거한다. 인터락이 필요없다.
+			pClientInfo->RecvBuffer(dwIoSize);
+			OnReceive(pClientInfo->GetClientIndex(), pClientInfo->GetRecvRingBuf());
 			pClientInfo->BindRecv();
 			break;
 		}
 		case IOOperation::SEND:
 		{
+			pClientInfo->SendCompleted(dwIoSize);
 			break;
 		}
 		default:
+		{
+			//예외처리
 			break;
+		}
 		}
 	}
 }

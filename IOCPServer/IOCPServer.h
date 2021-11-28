@@ -29,7 +29,7 @@ public:
 
 	void OnConnect(unsigned int clientIndx);
 	void OnClose(unsigned int clientIndx);
-	void OnReceive(unsigned int clientIndx, const unsigned int size, char* pData);
+	void OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf);
 
 
 //protected:

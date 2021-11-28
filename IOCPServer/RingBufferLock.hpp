@@ -148,6 +148,49 @@ public:
 		return bResult;
 	}
 
+	bool PopData(size_t size)
+	{
+		std::lock_guard<std::mutex> lock_guard(mCS);
+		bool bResult = false;
+		do
+		{
+			if (size == 0)
+				break;
+
+			if (size > MAX_BUFFER_SIZE)
+				break;
+
+			if (size > mSize)
+				break;
+
+			unsigned __int64 curTail = mTail;
+			unsigned __int64 nextTail = mTail + size;
+			if (nextTail > LAST_BUFFER_INDEX)
+			{
+				nextTail = nextTail - MAX_BUFFER_SIZE;
+			}
+			if ((mHead > curTail && mHead < nextTail) || (mHead < curTail && mHead > nextTail))
+			{
+				break;
+			}
+			if (curTail < nextTail)
+			{
+				ZeroMemory(&mBuffer[curTail], size);
+			}
+			else
+			{
+				size_t firstSize = MAX_BUFFER_SIZE - curTail;
+				size_t SecondSize = size - firstSize;
+
+				ZeroMemory(&mBuffer[0], firstSize);
+				ZeroMemory(&mBuffer[firstSize], SecondSize);
+			}
+			mTail = nextTail;
+			mSize -= size;
+		} while (false);
+		return bResult;
+	}
+
 	void Flush(rbuf_opt_e clear)
 	{
 		std::lock_guard<std::mutex> lock_guard(mCS);
@@ -155,7 +198,7 @@ public:
 		mHead = 0;
 		mTail = 0;
 
-		if (RBUF_CLEAR == clear)
+		if (rbuf_opt_e::RBUF_CLEAR == clear)
 		{
 			memset(mBuffer, 0, sizeof(mBuffer));
 		}

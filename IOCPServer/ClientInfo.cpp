@@ -171,7 +171,78 @@ bool ClientInfo::PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_)
 
 	return bResult;
 }
-char* ClientInfo::RecvBuffer()
+void ClientInfo::RecvBuffer(DWORD dwSize)
 {
-	return mRecvBuf;
+	mRecvRingbuffer.PutData(mRecvBuf, dwSize);
+}
+RingbufferLock* ClientInfo::GetRecvRingBuf()
+{
+	return &mRecvRingbuffer;
+}
+bool ClientInfo::SendMsg(const unsigned int uiMsgSize, void* pMsg)
+{
+	bool bResult = false;
+	do
+	{
+		if (mSendRingbuffer.PutData(pMsg, uiMsgSize) == false)
+			break;
+
+		if (SendIO() == false)
+			break;
+
+		bResult = true;
+	} while (false);
+	return bResult;
+}
+void ClientInfo::SendCompleted(const unsigned int uiMsgSize)
+{
+		mSendRingbuffer.PopData(uiMsgSize);
+		if (mSendRingbuffer.GetSize() > 0)
+		{
+			SendIO();
+		}
+}
+bool ClientInfo::SendIO()
+{
+	bool bResult = false;
+	do
+	{
+		size_t szSendSize = 0;
+		if (MAX_SOCK_SENDBUF < mSendRingbuffer.GetSize())
+			szSendSize = MAX_SOCK_SENDBUF;
+		else
+			szSendSize = mSendRingbuffer.GetSize();
+
+		if (ULONG_MAX < szSendSize)
+			szSendSize = ULONG_MAX;
+
+		if (mSendRingbuffer.GetData(mSendBuf, szSendSize) == false)
+		{
+			printf("[에러] SendIO - SendRingBuf");
+			break;
+		}
+		mSendRingbuffer.GetData(mSendBuf, szSendSize);
+		mSendOverlappedEx.m_wsaBuf.buf = mSendBuf;
+		mSendOverlappedEx.m_wsaBuf.len = static_cast<ULONG>(szSendSize);
+
+		DWORD dwSendNumBytes = 0;
+		int nRet = WSASend(mSocket,
+			&(mSendOverlappedEx.m_wsaBuf),
+			1,
+			&dwSendNumBytes,
+			0,
+			(LPWSAOVERLAPPED)&mSendOverlappedEx,
+			NULL);
+
+		//socket_error이면 client socket이 끊어진걸로 처리한다.
+		if (nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING))
+		{
+			printf("[에러] WSASend()함수 실패 : %d\n", WSAGetLastError());
+			break;
+		}
+
+		bResult = true;
+	} while (false);
+
+	return bResult;
 }

@@ -22,7 +22,13 @@ public:
 	bool BindRecv();
 	UINT64 GetLatestClosedTimeSec();
 	bool PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_);
-	char* RecvBuffer();
+
+	void RecvBuffer(DWORD dwSize);
+	RingbufferLock* GetRecvRingBuf();
+
+	bool SendMsg(const unsigned int uiMsgSize, void* pMsg);
+	void SendCompleted(const unsigned int uiMsgSize);
+	bool SendIO();
 protected:
 
 private:
@@ -32,10 +38,17 @@ private:
 	SOCKET mSocket = INVALID_SOCKET;
 	bool mIsConnect = false;
 	UINT64 mLatestClosedTimeSec = 0;
+	
+	stOverlappedEx	mSendOverlappedEx;
+	char mSendBuf[MAX_SOCK_SENDBUF] = { 0, };
+	RingbufferLock mSendRingbuffer;
+	std::mutex mSendMutex;
+
 	stOverlappedEx	mRecvOverlappedEx;
-	char mRecvBuf[MAX_SOCK_RECVBUF] = {0,};
+	char mRecvBuf[MAX_SOCK_RECVBUF] = { 0, };
+	RingbufferLock mRecvRingbuffer;
+	
 	stOverlappedEx	mAcceptContext;
 	char mAcceptBuf[64] = { 0, };
-	RingbufferLock mRingBuffer;
 };
 
