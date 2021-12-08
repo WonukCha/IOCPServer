@@ -1,22 +1,23 @@
 #pragma once
 #include <mutex>
 
-constexpr size_t MAX_BUFFER_SIZE = 4096;
+constexpr size_t MAX_BUFFER_SIZE = 4096000;
+//constexpr size_t MAX_BUFFER_SIZE = 100;
 constexpr size_t LAST_BUFFER_INDEX = MAX_BUFFER_SIZE - 1;
 
 // ring buffer options
-enum class rbuf_opt_e
+typedef enum
 {
 	RBUF_CLEAR = 0,
 	RBUF_NO_CLEAR,
-};
+} rbuf_opt_e;
 
 // buffer messages
-enum class rbuf_msg_e
+typedef enum
 {
 	RBUF_EMPTY = -1,
 	RBUF_FULL
-};
+} rbuf_msg_e;
 
 class RingbufferLock
 {
@@ -62,52 +63,53 @@ public:
 				break;
 
 			char* dataPos = (char*)data;
-			unsigned __int64 curHead = mHead;
-			unsigned __int64 nextHead = mHead + size;
+			unsigned __int64 curTailBegin = mTail;
+			unsigned __int64 nextTail = mTail + (unsigned __int64)size;
+			unsigned __int64 curTailEnd = mTail + (unsigned __int64)size - 1;
+
 			bool bOver = false;
-			if (nextHead > LAST_BUFFER_INDEX)
+			if (nextTail > LAST_BUFFER_INDEX)
 			{
-				nextHead = nextHead - MAX_BUFFER_SIZE;
+				nextTail = nextTail - MAX_BUFFER_SIZE;
 				bOver = true;
 			}
 			if (mHead != mTail)
 			{
 				if (bOver)
 				{
-					if ((curHead <= mTail && mTail < MAX_BUFFER_SIZE)
-						|| (0 <= mTail && mTail < nextHead))
+					if ((curTailBegin <= mHead && mHead < MAX_BUFFER_SIZE)
+						|| (0 <= mHead && mHead < nextTail))
 						break;
 				}
 				else
 				{
-					if (curHead <= mTail && mTail < nextHead)
+					if (curTailBegin <= mHead && mHead < nextTail)
 						break;
 				}
 			}
-
-			if (curHead < nextHead)
+			if (curTailBegin < MAX_BUFFER_SIZE && curTailEnd < MAX_BUFFER_SIZE && curTailBegin < curTailEnd)
 			{
-				memcpy(&mBuffer[curHead], data, size);
+				memcpy(&mBuffer[curTailBegin], data, size);
 			}
 			else
 			{
-				size_t firstSize = MAX_BUFFER_SIZE - curHead;
+				size_t firstSize = MAX_BUFFER_SIZE - curTailBegin;
 				size_t SecondSize = size - firstSize;
 
-				memcpy(&mBuffer[curHead], &dataPos[0], firstSize);
+				memcpy(&mBuffer[curTailBegin], &dataPos[0], firstSize);
 				memcpy(&mBuffer[0], &dataPos[firstSize], SecondSize);
 			}
 
-			mHead = nextHead;
+			mTail = nextTail;
 			mSize += size;
 			bResult = true;
 		} while (false);
 		return bResult;
 	}
-	bool GetData(void* data, size_t size, rbuf_opt_e clear = rbuf_opt_e::RBUF_CLEAR)
+	size_t GetData(void* data, size_t size, rbuf_opt_e clear = RBUF_CLEAR)
 	{
 		std::lock_guard<std::mutex> lock_guard(mCS);
-		bool bResult = false;
+		size_t szResult = 0;
 		do
 		{
 			if (size == 0)
@@ -120,73 +122,80 @@ public:
 				break;
 
 			char* dataPos = (char*)data;
-			unsigned __int64 curTail = mTail;
-			unsigned __int64 nextTail = mTail + size;
-			if (nextTail > LAST_BUFFER_INDEX)
+			unsigned __int64 curHeadBegin = mHead;
+			unsigned __int64 nextHead = mHead + (unsigned __int64)size;
+			unsigned __int64 curHeadEnd = mHead + (unsigned __int64)size - 1;
+			bool bOver = false;
+
+			if (nextHead > LAST_BUFFER_INDEX)
 			{
-				nextTail = nextTail - MAX_BUFFER_SIZE;
+				nextHead = nextHead - MAX_BUFFER_SIZE;
+				bOver = true;
 			}
-			if ((mHead > curTail && mHead < nextTail) || (mHead < curTail && mHead > nextTail))
+			if (mHead != mTail)
 			{
-				break;
+				if (bOver)
+				{
+					if ((curHeadBegin <= mTail && mTail < MAX_BUFFER_SIZE)
+						|| (0 <= mTail && mTail < nextHead))
+						break;
+				}
+				else
+				{
+					if (curHeadBegin <= mTail && mTail < nextHead)
+						break;
+				}
 			}
-			if (curTail < nextTail)
+			if (curHeadBegin < MAX_BUFFER_SIZE && curHeadEnd < MAX_BUFFER_SIZE && curHeadBegin < curHeadEnd)
 			{
-				memcpy(dataPos, &mBuffer[curTail], size);
+				memcpy(dataPos, &mBuffer[curHeadBegin], size);
 			}
 			else
 			{
-				size_t firstSize = MAX_BUFFER_SIZE - curTail;
+				size_t firstSize = MAX_BUFFER_SIZE - curHeadBegin;
 				size_t SecondSize = size - firstSize;
 
-				memcpy(&dataPos[0], &mBuffer[curTail], firstSize);
+				memcpy(&dataPos[0], &mBuffer[curHeadBegin], firstSize);
 				memcpy(&dataPos[firstSize], &mBuffer[0], SecondSize);
 			}
-			mTail = nextTail;
-			mSize -= size;
+			if (clear == RBUF_CLEAR)
+			{
+				mHead = nextHead;
+				mSize -= size;
+			}
+			szResult = size;
 		} while (false);
-		return bResult;
+		return szResult;
 	}
 
-	bool PopData(size_t size)
+	bool DeleteData(size_t size)
 	{
 		std::lock_guard<std::mutex> lock_guard(mCS);
+
 		bool bResult = false;
 		do
 		{
 			if (size == 0)
 				break;
 
-			if (size > MAX_BUFFER_SIZE)
+			if (size >
+				MAX_BUFFER_SIZE)
 				break;
 
 			if (size > mSize)
 				break;
 
-			unsigned __int64 curTail = mTail;
-			unsigned __int64 nextTail = mTail + size;
-			if (nextTail > LAST_BUFFER_INDEX)
+			unsigned int curHead = mHead;
+			unsigned int nextHead = mHead + (unsigned int)size;
+			if (nextHead > LAST_BUFFER_INDEX)
 			{
-				nextTail = nextTail - MAX_BUFFER_SIZE;
+				nextHead = nextHead - MAX_BUFFER_SIZE;
 			}
-			if ((mHead > curTail && mHead < nextTail) || (mHead < curTail && mHead > nextTail))
-			{
-				break;
-			}
-			if (curTail < nextTail)
-			{
-				ZeroMemory(&mBuffer[curTail], size);
-			}
-			else
-			{
-				size_t firstSize = MAX_BUFFER_SIZE - curTail;
-				size_t SecondSize = size - firstSize;
 
-				ZeroMemory(&mBuffer[0], firstSize);
-				ZeroMemory(&mBuffer[firstSize], SecondSize);
-			}
-			mTail = nextTail;
+			mHead = nextHead;
 			mSize -= size;
+
+			bResult = true;
 		} while (false);
 		return bResult;
 	}
@@ -198,10 +207,22 @@ public:
 		mHead = 0;
 		mTail = 0;
 
-		if (rbuf_opt_e::RBUF_CLEAR == clear)
+		if (RBUF_CLEAR == clear)
 		{
 			memset(mBuffer, 0, sizeof(mBuffer));
 		}
+	}
+
+	void Clear()
+	{
+		std::lock_guard<std::mutex> lock_guard(mCS);
+		mSize = 0;
+		mHead = 0;
+		mTail = 0;
+	}
+	size_t GetMaxSize()
+	{
+		return MAX_BUFFER_SIZE;
 	}
 
 private:

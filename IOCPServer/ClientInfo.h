@@ -15,6 +15,7 @@ public:
 
 	bool IsConnect();
 	unsigned int GetClientIndex();
+
 	void Close(bool bLingerOn = false);
 	bool AcceptCompletion();
 	bool OnConnect(HANDLE iocpHandle_, SOCKET socket_);

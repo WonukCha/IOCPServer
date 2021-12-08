@@ -1,4 +1,5 @@
 #include "ClientInfo.h"
+#include <iostream>
 
 ClientInfo::ClientInfo()
 {
@@ -138,6 +139,8 @@ UINT64 ClientInfo::GetLatestClosedTimeSec()
 }
 bool ClientInfo::PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_)
 {
+	printf_s("PostAccept. client Index: %d\n", GetClientIndex());
+
 	bool bResult = false;
 
 	do
@@ -196,11 +199,13 @@ bool ClientInfo::SendMsg(const unsigned int uiMsgSize, void* pMsg)
 }
 void ClientInfo::SendCompleted(const unsigned int uiMsgSize)
 {
-		mSendRingbuffer.PopData(uiMsgSize);
-		if (mSendRingbuffer.GetSize() > 0)
-		{
-			SendIO();
-		}
+	std::cout << "Client : " << GetClientIndex() << ", Send Size : " << uiMsgSize << "\r\n";
+
+	mSendRingbuffer.DeleteData(uiMsgSize);
+	if (mSendRingbuffer.GetSize() > 0)
+	{
+		SendIO();
+	}
 }
 bool ClientInfo::SendIO()
 {
@@ -222,8 +227,11 @@ bool ClientInfo::SendIO()
 			break;
 		}
 		mSendRingbuffer.GetData(mSendBuf, szSendSize);
+
 		mSendOverlappedEx.m_wsaBuf.buf = mSendBuf;
 		mSendOverlappedEx.m_wsaBuf.len = static_cast<ULONG>(szSendSize);
+		mSendOverlappedEx.m_eOperation = IOOperation::SEND;
+
 
 		DWORD dwSendNumBytes = 0;
 		int nRet = WSASend(mSocket,

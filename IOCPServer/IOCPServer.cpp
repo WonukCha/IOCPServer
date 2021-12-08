@@ -11,9 +11,35 @@ IOCPServer::~IOCPServer(void)
 
 }
 
-void IOCPServer::OnConnect(unsigned int clientIndx) {};
-void IOCPServer::OnClose(unsigned int clientIndx) {};
-void IOCPServer::OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf) {};
+void IOCPServer::OnConnect(unsigned int clientIndx) 
+{
+	std::cout << "Client : "<< clientIndx << ", OnConnect\r\n";
+}
+void IOCPServer::OnClose(unsigned int clientIndx) 
+{
+	std::cout << "Client : " << clientIndx << ", OnClose\r\n";
+
+}
+void IOCPServer::OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf) 
+{
+	size_t bufSize = pRingbuf->GetSize();
+	if (bufSize < 36)
+	{
+		int a = 1;
+	}
+
+	char* buf = new char[bufSize + 1];
+	buf[bufSize] = '\0';
+	std::string str;
+	str.resize(bufSize);
+	pRingbuf->GetData(buf, bufSize, rbuf_opt_e::RBUF_CLEAR);
+	str = buf;
+	std::cout << "Client : " << clientIndx << ", OnReceive : " << str << "\r\n";
+
+	GetClientInfo(clientIndx)->SendMsg(bufSize, buf);
+	delete[] buf;
+	buf = nullptr;
+}
 
 bool IOCPServer::Init(unsigned int MaxThreadCount)
 {
@@ -50,7 +76,7 @@ bool IOCPServer::BindListen(unsigned short port)
 	bool bFuncResult = false;
 	SOCKADDR_IN		stServerInfo;
 	stServerInfo.sin_addr.s_addr = htonl(INADDR_ANY);
-	stServerInfo.sin_port = port;
+	stServerInfo.sin_port = htons(port);
 	stServerInfo.sin_family = AF_INET;
 
 	do
@@ -61,7 +87,6 @@ bool IOCPServer::BindListen(unsigned short port)
 			std::cout << "[Error] bind : " << WSAGetLastError() << " Function :" << __FUNCTION__ << " Line :" << __LINE__ << "/r/n";
 			break;
 		}
-		__LINE__;
 
 		nResult = listen(mListenSocket, 5);
 		if (0 != nResult)
@@ -101,8 +126,11 @@ bool IOCPServer::StartServer(const unsigned int MaxClientCount)
 	{
 		mWorkThread[i] = std::thread([this]() {this->WorkThread(); });
 	}
+	std::cout << "Start Work Thread\r\n";
 
 	mAcceptThread = std::thread([this]() {this->AcceptThread(); });
+
+	std::cout << "Start Accept Thread\r\n";
 
 	bResult = true;
 
@@ -188,7 +216,6 @@ void IOCPServer::WorkThread()
 			if (pClientInfo->AcceptCompletion())
 			{
 				//++mClientCnt;
-
 				OnConnect(pClientInfo->GetClientIndex());
 			}
 			else
