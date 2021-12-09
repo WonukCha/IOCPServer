@@ -1,23 +1,23 @@
 #pragma once
 #include <mutex>
 
-constexpr size_t MAX_BUFFER_SIZE = 4096000;
-//constexpr size_t MAX_BUFFER_SIZE = 100;
+//constexpr size_t MAX_BUFFER_SIZE = 4096000;
+constexpr size_t MAX_BUFFER_SIZE = 100;
 constexpr size_t LAST_BUFFER_INDEX = MAX_BUFFER_SIZE - 1;
 
 // ring buffer options
-typedef enum
+enum class rbuf_opt_e
 {
 	RBUF_CLEAR = 0,
 	RBUF_NO_CLEAR,
-} rbuf_opt_e;
+};
 
 // buffer messages
-typedef enum
+enum class rbuf_msg_e
 {
 	RBUF_EMPTY = -1,
 	RBUF_FULL
-} rbuf_msg_e;
+};
 
 class RingbufferLock
 {
@@ -106,7 +106,7 @@ public:
 		} while (false);
 		return bResult;
 	}
-	size_t GetData(void* data, size_t size, rbuf_opt_e clear = RBUF_CLEAR)
+	size_t GetData(void* data, size_t size, rbuf_opt_e clear = rbuf_opt_e::RBUF_CLEAR)
 	{
 		std::lock_guard<std::mutex> lock_guard(mCS);
 		size_t szResult = 0;
@@ -158,7 +158,7 @@ public:
 				memcpy(&dataPos[0], &mBuffer[curHeadBegin], firstSize);
 				memcpy(&dataPos[firstSize], &mBuffer[0], SecondSize);
 			}
-			if (clear == RBUF_CLEAR)
+			if (clear == rbuf_opt_e::RBUF_CLEAR)
 			{
 				mHead = nextHead;
 				mSize -= size;
@@ -185,8 +185,8 @@ public:
 			if (size > mSize)
 				break;
 
-			unsigned int curHead = mHead;
-			unsigned int nextHead = mHead + (unsigned int)size;
+			unsigned __int64 curHead = mHead;
+			unsigned __int64 nextHead = mHead + (unsigned __int64)size;
 			if (nextHead > LAST_BUFFER_INDEX)
 			{
 				nextHead = nextHead - MAX_BUFFER_SIZE;
@@ -207,7 +207,7 @@ public:
 		mHead = 0;
 		mTail = 0;
 
-		if (RBUF_CLEAR == clear)
+		if (rbuf_opt_e::RBUF_CLEAR == clear)
 		{
 			memset(mBuffer, 0, sizeof(mBuffer));
 		}

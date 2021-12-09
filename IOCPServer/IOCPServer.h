@@ -23,20 +23,22 @@ public:
 	IOCPServer(void);
 	virtual ~IOCPServer(void);
 
-	//virtual void OnConnect(unsigned int clientIndx) PURE;
-	//virtual void OnClose(unsigned int clientIndx) PURE;
-	//virtual void OnReceive(unsigned int clientIndx) PURE;
+	virtual void OnConnect(unsigned int clientIndx) PURE;
+	virtual void OnClose(unsigned int clientIndx) PURE;
+	virtual void OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf) PURE;
 
-	void OnConnect(unsigned int clientIndx);
-	void OnClose(unsigned int clientIndx);
-	void OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf);
+	bool SendMsg(const UINT32 clientIndx, const size_t bufSize, char* pData);
+	//void OnConnect(unsigned int clientIndx);
+	//void OnClose(unsigned int clientIndx);
+	//void OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf);
 
-
-//protected:
 	bool Init(unsigned int maxThreadCount);
 	bool BindListen(unsigned short port);
 	bool StartServer(const unsigned int maxClientCount);
 	void DestroyThread();
+
+protected:
+
 
 private:
 	void CreateClient(const unsigned int maxClientCount);
@@ -56,7 +58,6 @@ private:
 	bool mIsAcceptRun = true;
 	//atomic으로 변환
 	unsigned int mClientCnt = 0;
-
 };
 
 

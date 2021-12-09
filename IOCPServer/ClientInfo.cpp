@@ -139,7 +139,7 @@ UINT64 ClientInfo::GetLatestClosedTimeSec()
 }
 bool ClientInfo::PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_)
 {
-	printf_s("PostAccept. client Index: %d\n", GetClientIndex());
+	std::cout << "PostAccept. client Index: "<< GetClientIndex() << "\r\n";
 
 	bool bResult = false;
 
@@ -182,7 +182,7 @@ RingbufferLock* ClientInfo::GetRecvRingBuf()
 {
 	return &mRecvRingbuffer;
 }
-bool ClientInfo::SendMsg(const unsigned int uiMsgSize, void* pMsg)
+bool ClientInfo::SendMsg(const unsigned __int64 uiMsgSize, void* pMsg)
 {
 	bool bResult = false;
 	do
@@ -223,7 +223,7 @@ bool ClientInfo::SendIO()
 
 		if (mSendRingbuffer.GetData(mSendBuf, szSendSize) == false)
 		{
-			printf("[에러] SendIO - SendRingBuf");
+			std::cout << "[Error] SendIO - SendRingBuf \r\n";
 			break;
 		}
 		mSendRingbuffer.GetData(mSendBuf, szSendSize);
@@ -245,7 +245,7 @@ bool ClientInfo::SendIO()
 		//socket_error이면 client socket이 끊어진걸로 처리한다.
 		if (nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING))
 		{
-			printf("[에러] WSASend()함수 실패 : %d\n", WSAGetLastError());
+			std::cout << "[Error] WSASend()함수 실패 : " << WSAGetLastError() << "\r\n";
 			break;
 		}
 

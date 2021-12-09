@@ -11,35 +11,35 @@ IOCPServer::~IOCPServer(void)
 
 }
 
-void IOCPServer::OnConnect(unsigned int clientIndx) 
-{
-	std::cout << "Client : "<< clientIndx << ", OnConnect\r\n";
-}
-void IOCPServer::OnClose(unsigned int clientIndx) 
-{
-	std::cout << "Client : " << clientIndx << ", OnClose\r\n";
-
-}
-void IOCPServer::OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf) 
-{
-	size_t bufSize = pRingbuf->GetSize();
-	if (bufSize < 36)
-	{
-		int a = 1;
-	}
-
-	char* buf = new char[bufSize + 1];
-	buf[bufSize] = '\0';
-	std::string str;
-	str.resize(bufSize);
-	pRingbuf->GetData(buf, bufSize, rbuf_opt_e::RBUF_CLEAR);
-	str = buf;
-	std::cout << "Client : " << clientIndx << ", OnReceive : " << str << "\r\n";
-
-	GetClientInfo(clientIndx)->SendMsg(bufSize, buf);
-	delete[] buf;
-	buf = nullptr;
-}
+//void IOCPServer::OnConnect(unsigned int clientIndx) 
+//{
+//	std::cout << "Client : "<< clientIndx << ", OnConnect\r\n";
+//}
+//void IOCPServer::OnClose(unsigned int clientIndx) 
+//{
+//	std::cout << "Client : " << clientIndx << ", OnClose\r\n";
+//}
+//
+//void IOCPServer::OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf) 
+//{
+//	size_t bufSize = pRingbuf->GetSize();
+//	if (bufSize < 36)
+//	{
+//		int a = 1;
+//	}
+//
+//	char* buf = new char[bufSize + 1];
+//	buf[bufSize] = '\0';
+//	std::string str;
+//	str.resize(bufSize);
+//	pRingbuf->GetData(buf, bufSize, rbuf_opt_e::RBUF_CLEAR);
+//	str = buf;
+//	std::cout << "Client : " << clientIndx << ", OnReceive : " << str << "\r\n";
+//
+//	GetClientInfo(clientIndx)->SendMsg(bufSize, buf);
+//	delete[] buf;
+//	buf = nullptr;
+//}
 
 bool IOCPServer::Init(unsigned int MaxThreadCount)
 {
@@ -295,6 +295,14 @@ ClientInfo* IOCPServer::GetClientInfo(unsigned int index)
 
 	return pClinetInfo;
 }
+
+bool IOCPServer::SendMsg(const UINT32 clientIndx, const size_t bufSize, char* pData)
+{
+	auto pClient = GetClientInfo(clientIndx);
+	return pClient->SendMsg(bufSize, pData);
+}
+
+
 void IOCPServer::CloseSocket(ClientInfo* clientInfo, bool bLingerOn)
 {
 	do

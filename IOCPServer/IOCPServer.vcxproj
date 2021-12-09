@@ -139,12 +139,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ClientInfo.cpp" />
+    <ClCompile Include="EchoServer.cpp" />
     <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="EchoServer.h" />
     <ClInclude Include="IOCPServer.h" />
     <ClInclude Include="RingBufferLock.hpp" />
   </ItemGroup>

@@ -27,7 +27,7 @@ public:
 	void RecvBuffer(DWORD dwSize);
 	RingbufferLock* GetRecvRingBuf();
 
-	bool SendMsg(const unsigned int uiMsgSize, void* pMsg);
+	bool SendMsg(const unsigned __int64 uiMsgSize, void* pMsg);
 	void SendCompleted(const unsigned int uiMsgSize);
 	bool SendIO();
 protected:
