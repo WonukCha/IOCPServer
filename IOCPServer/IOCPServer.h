@@ -28,9 +28,6 @@ public:
 	virtual void OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf) PURE;
 
 	bool SendMsg(const UINT32 clientIndx, const size_t bufSize, char* pData);
-	//void OnConnect(unsigned int clientIndx);
-	//void OnClose(unsigned int clientIndx);
-	//void OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf);
 
 	bool Init(unsigned int maxThreadCount);
 	bool BindListen(unsigned short port);

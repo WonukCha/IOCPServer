@@ -27,9 +27,6 @@
     <ClInclude Include="Define.h">
       <Filter>소스 파일\IOCPServer</Filter>
     </ClInclude>
-    <ClInclude Include="EchoServer.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="RingBuffer.hpp">
       <Filter>소스 파일\IOCPServer</Filter>
     </ClInclude>
@@ -46,9 +43,6 @@
     </ClCompile>
     <ClCompile Include="ClientInfo.cpp">
       <Filter>소스 파일\IOCPServer</Filter>
-    </ClCompile>
-    <ClCompile Include="EchoServer.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
