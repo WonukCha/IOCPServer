@@ -264,7 +264,7 @@ void IOCPServer::AcceptThread()
 				continue;
 			}
 
-			if ((UINT64)curTimeSec < client->GetLatestClosedTimeSec())
+			if (static_cast<UINT64>(curTimeSec) < client->GetLatestClosedTimeSec())
 			{
 				continue;
 			}

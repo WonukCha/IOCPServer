@@ -9,7 +9,7 @@ using namespace std;
 
 #define MAX_THREAD_COUNT 10
 
-#define MAX_CLIENT_COUNT 10
+#define MAX_CLIENT_COUNT 1000
 
 int main(void)
 {

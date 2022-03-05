@@ -176,7 +176,7 @@ public:
 			if (size > mSize)
 				break;
 
-			unsigned __int64 curHead = mHead;
+			//unsigned __int64 curHead = mHead;
 			unsigned __int64 nextHead = mHead + (unsigned __int64)size;
 			if (nextHead > LAST_BUFFER_INDEX)
 			{
