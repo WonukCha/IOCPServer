@@ -24,8 +24,7 @@ public:
 	UINT64 GetLatestClosedTimeSec();
 	bool PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_);
 
-	void RecvBuffer(DWORD dwSize);
-	RingbufferLock* GetRecvRingBuf();
+	char* GetRecvBuf();
 
 	bool SendMsg(const unsigned __int64 uiMsgSize, void* pMsg);
 	void SendCompleted(const unsigned int uiMsgSize);
@@ -47,7 +46,6 @@ private:
 
 	stOverlappedEx	mRecvOverlappedEx;
 	char mRecvBuf[MAX_SOCK_RECVBUF] = { 0, };
-	RingbufferLock mRecvRingbuffer;
 	
 	stOverlappedEx	mAcceptContext;
 	char mAcceptBuf[64] = { 0, };

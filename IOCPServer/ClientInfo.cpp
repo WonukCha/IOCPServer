@@ -36,6 +36,12 @@ unsigned int ClientInfo::GetClientIndex()
 {
 	return mClinetIndex;
 }
+
+char* ClientInfo::GetRecvBuf()
+{
+	return mRecvBuf;
+}
+
 void ClientInfo::Close(bool bLingerOn)
 {
 	struct linger stLinger = { 0, 0 };
@@ -173,14 +179,6 @@ bool ClientInfo::PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_)
 	} while (false);
 
 	return bResult;
-}
-void ClientInfo::RecvBuffer(DWORD dwSize)
-{
-	mRecvRingbuffer.PutData(mRecvBuf, dwSize);
-}
-RingbufferLock* ClientInfo::GetRecvRingBuf()
-{
-	return &mRecvRingbuffer;
 }
 bool ClientInfo::SendMsg(const unsigned __int64 uiMsgSize, void* pMsg)
 {
