@@ -16,6 +16,6 @@ public:
 	void End();
 
 private:
-	PacketManager packetManager;
+	PacketManager mPacketManager;
 };
 

@@ -143,15 +143,18 @@
     <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PacketManager.cpp" />
+    <ClCompile Include="UserManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatServer.h" />
     <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="IOCPServer.h" />
+    <ClInclude Include="PacketDefine.h" />
     <ClInclude Include="PacketManager.h" />
     <ClInclude Include="RingBuffer.hpp" />
     <ClInclude Include="RingBufferLock.hpp" />
+    <ClInclude Include="UserManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
