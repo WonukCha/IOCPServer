@@ -227,12 +227,7 @@ void IOCPServer::WorkThread()
 		}
 		case IOOperation::RECV:
 		{
-			//TODO
-			//여기에 락버퍼가 필요한가?
-			//2개의 스레드가 접근이 없는데 필요한건인가?
-			//링 바이트 버퍼로 만들고 락은 제거한다. 인터락이 필요없다.
-			pClientInfo->RecvBuffer(dwIoSize);
-			OnReceive(pClientInfo->GetClientIndex(), pClientInfo->GetRecvRingBuf());
+			OnReceive(pClientInfo->GetClientIndex(), pClientInfo->GetRecvBuf(), dwIoSize);
 			pClientInfo->BindRecv();
 			break;
 		}

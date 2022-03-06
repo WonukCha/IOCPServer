@@ -25,7 +25,7 @@ public:
 
 	virtual void OnConnect(unsigned int clientIndx) PURE;
 	virtual void OnClose(unsigned int clientIndx) PURE;
-	virtual void OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf) PURE;
+	virtual void OnReceive(unsigned int clientIndx, char* pData, DWORD dwDataSize) PURE;
 
 	bool SendMsg(const UINT32 clientIndx, const size_t bufSize, char* pData);
 
