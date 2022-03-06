@@ -16,6 +16,9 @@
     <Filter Include="소스 파일\IOCPServer">
       <UniqueIdentifier>{0e3428b3-45d8-4655-b2b9-ce02bddf4d0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\ChatServer">
+      <UniqueIdentifier>{c338f2d5-f423-4079-863d-ad82b84a1610}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IOCPServer.h">
@@ -33,6 +36,12 @@
     <ClInclude Include="RingBufferLock.hpp">
       <Filter>소스 파일\IOCPServer</Filter>
     </ClInclude>
+    <ClInclude Include="ChatServer.h">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketManager.h">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IOCPServer.cpp">
@@ -43,6 +52,12 @@
     </ClCompile>
     <ClCompile Include="ClientInfo.cpp">
       <Filter>소스 파일\IOCPServer</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatServer.cpp">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketManager.cpp">
+      <Filter>소스 파일\ChatServer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

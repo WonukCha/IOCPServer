@@ -18,6 +18,5 @@ private:
 	bool mIsRunProcessThread;
 	std::thread mProcessThread;
 
-	std::unordered_map<>;
 };
 

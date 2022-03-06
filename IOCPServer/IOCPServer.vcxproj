@@ -138,14 +138,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ChatServer.cpp" />
     <ClCompile Include="ClientInfo.cpp" />
     <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PacketManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ChatServer.h" />
     <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="IOCPServer.h" />
+    <ClInclude Include="PacketManager.h" />
     <ClInclude Include="RingBuffer.hpp" />
     <ClInclude Include="RingBufferLock.hpp" />
   </ItemGroup>

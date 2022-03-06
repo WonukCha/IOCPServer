@@ -7,9 +7,8 @@ void ChatServer::OnConnect(unsigned int clientIndx)
 void ChatServer::OnClose(unsigned int clientIndx)
 {
 	std::cout << "OnClose : " << clientIndx << "\r\n";
-
 }
-void ChatServer::OnReceive(unsigned int clientIndx, RingbufferLock* pRingbuf)
+void ChatServer::OnReceive(unsigned int clientIndx, char* pData, DWORD dwDataSize)
 {
 	std::cout << "OnReceive : " << clientIndx << "\r\n";
 }
