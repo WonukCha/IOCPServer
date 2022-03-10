@@ -48,6 +48,9 @@
     <ClInclude Include="PacketDefine.h">
       <Filter>소스 파일\ChatServer</Filter>
     </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IOCPServer.cpp">
@@ -66,6 +69,9 @@
       <Filter>소스 파일\ChatServer</Filter>
     </ClCompile>
     <ClCompile Include="UserManager.cpp">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
       <Filter>소스 파일\ChatServer</Filter>
     </ClCompile>
   </ItemGroup>

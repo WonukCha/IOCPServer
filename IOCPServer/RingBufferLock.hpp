@@ -2,7 +2,7 @@
 #include "RingBuffer.hpp"
 #include <mutex>
 
-class RingbufferLock : public RingBuffer
+class RingBufferLock : public RingBuffer
 {
 public:
 	void Init()

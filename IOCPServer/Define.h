@@ -4,7 +4,7 @@
 #include <Ws2tcpip.h>
 #include <mswsock.h>
 
-constexpr UINT32 MAX_SOCK_RECVBUF = 256;	// 소켓 버퍼의 크기
+constexpr UINT32 MAX_SOCK_RECVBUF = 512;	// 소켓 버퍼의 크기
 constexpr UINT32 MAX_SOCK_SENDBUF = 4096;	// 소켓 버퍼의 크기
 constexpr UINT64 RE_USE_SESSION_WAIT_TIMESEC = 3;
 
@@ -23,5 +23,3 @@ struct stOverlappedEx
 	IOOperation m_eOperation = IOOperation::ACCEPT;			//작업 동작 종류
 	UINT32 SessionIndex = 0;
 };
-
-#pragma once

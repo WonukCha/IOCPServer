@@ -13,5 +13,17 @@ int main(void)
 	chatServer.BindListen(SERVER_PORT);
 	chatServer.Run(MAX_CLIENT_COUNT);
 
+	printf("아무 키나 누를 때까지 대기합니다\n");
+	while (true)
+	{
+		std::string inputCmd;
+		std::getline(std::cin, inputCmd);
+
+		if (inputCmd == "quit")
+		{
+			break;
+		}
+	}
+	chatServer.End();
 	return 0;
 }
