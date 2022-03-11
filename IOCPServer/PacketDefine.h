@@ -1,7 +1,7 @@
 #pragma once
 #include <basetsd.h>
 
-constexpr UINT16 USER_BUFFER_SIZE = 4096;
+constexpr UINT16 USER_BUFFER_SIZE = 1204;
 constexpr UINT16 CHAT_SIZE = 255;
 
 enum class USER_STATUS_INFO : UINT8

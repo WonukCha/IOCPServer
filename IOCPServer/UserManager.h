@@ -22,9 +22,9 @@ public:
 private:
 	bool InitUser(const UINT32 userIndex);
 
-	std::vector<User> mUserList;
+	std::vector<User> mUserGroup;
 	std::list<User*> mOnLineUserList;
 
-	User mNone;
+	const User mNone;
 };
 

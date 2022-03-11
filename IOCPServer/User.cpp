@@ -3,11 +3,11 @@
 void User::Init()
 {
 	mUserStatus = USER_STATUS_INFO::NONE;
-	mID = "";
+	mId = "";
 	mRecvBuffer.Clear();
-	memset(mReceiveBuffer, 0, sizeof(mReceiveBuffer));
+	memset(mStageBuffer, 0, sizeof(mStageBuffer));
 }
-bool User::PushLowData(char* pData, UINT16 dwDataSize)
+bool User::PushLowData(char* pData, UINT32 dwDataSize)
 {
 	return mRecvBuffer.PutData(pData, static_cast<size_t>(dwDataSize));
 }
@@ -33,12 +33,12 @@ PacketInfo User::GetPacketInfo()
 		if (header.unPacketSize > mRecvBuffer.GetSize())
 			break;
 
-		mRecvBuffer.GetData(mReceiveBuffer, header.unPacketSize, rbuf_opt_e::RBUF_CLEAR);
+		mRecvBuffer.GetData(mStageBuffer, header.unPacketSize, rbuf_opt_e::RBUF_CLEAR);
 
 		info.clientNum = GetUserIndex();
 		info.dataSize = header.unPacketSize;
 		info.packetId = static_cast<UINT16>(header.pakcetID);
-		info.pData = mReceiveBuffer;
+		info.pData = mStageBuffer;
 	} while (false);
 
 	return info;

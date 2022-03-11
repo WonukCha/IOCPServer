@@ -19,7 +19,7 @@ void ChatServer::OnReceive(unsigned int clientIndx, char* pData, DWORD dwDataSiz
 }
 void ChatServer::Run(const unsigned int MaxClientCount)
 {
-	auto sendPacketFunc = [&](UINT32 clientIndex, char* pSendPacket, UINT16 packetSize)
+	auto sendPacketFunc = [&](UINT32 clientIndex, char* pSendPacket, UINT32 packetSize)
 	{
 		SendMsg(clientIndex, packetSize, pSendPacket);
 	};

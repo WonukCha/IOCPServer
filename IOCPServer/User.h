@@ -9,7 +9,7 @@ class User
 public:
 	void Init();
 
-	bool PushLowData(char* pData, UINT16 dwDataSize);
+	bool PushLowData(char* pData, UINT32 dwDataSize);
 
 	PacketInfo GetPacketInfo();
 	void SetUserStatus(USER_STATUS_INFO status);
@@ -21,7 +21,7 @@ public:
 private:
 	UINT32 mUserIndex = UINT32_MAX;
 	USER_STATUS_INFO mUserStatus = USER_STATUS_INFO::NONE;
-	std::string mID;
+	std::string mId;
 	RingBufferLock mRecvBuffer;
-	char mReceiveBuffer[USER_BUFFER_SIZE];
+	char mStageBuffer[USER_BUFFER_SIZE];
 };

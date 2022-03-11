@@ -5,6 +5,7 @@ void PacketManager::Init(const UINT32 maxClientCount)
 
 	mProcMap[static_cast<int>(PACKET_ID::PACKET_ID_DISCONNECT)] = &PacketManager::ProcessSystemDisonnect;
 	mProcMap[static_cast<int>(PACKET_ID::PACKET_ID_CONNECT)]= &PacketManager::ProcessSystemConnect;
+
 	mProcMap[static_cast<int>(PACKET_ID::PACKET_ID_CLIENT_TO_SERVER_CHATTING)]= &PacketManager::ProcessReceiveChat;
 
 	mUserManager.SendPacketFunc = SendPacketFunc;
@@ -82,40 +83,40 @@ void PacketManager::PacketProcess()
 
 void PacketManager::PushSystemInfo(UINT32 clientIndx, PACKET_ID systeminfo)
 {
-	PacketInfo packetInfo;
-	packetInfo.clientNum = clientIndx;
-	packetInfo.packetId = static_cast<UINT16>(systeminfo);
+	PacketInfo systemInfo;
+	systemInfo.clientNum = clientIndx;
+	systemInfo.packetId = static_cast<UINT16>(systeminfo);
 
 	mSystemInfoQueueLock.lock();
-	mSystemInfoQueue.push(packetInfo);
+	mSystemInfoQueue.push(systemInfo);
 	mSystemInfoQueueLock.unlock();
 }
-void PacketManager::PushReceiveData(UINT32 clientIndx, char* pData, UINT16 dwDataSize)
+void PacketManager::PushReceiveData(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
 	User* user = nullptr;
 	user = mUserManager.GetUser(clientIndx);
 	if (user != nullptr)
 	{
-		user->PushLowData(pData, dwDataSize);
+		user->PushLowData(pData, dataSize);
 		mUserReceiveEventQueueLock.lock();
 		mUserReceiveEventQueue.push(clientIndx);
 		mUserReceiveEventQueueLock.unlock();
 	}
 }
 
-void PacketManager::ProcessSystemConnect(UINT32 clientIndx, char* pData, UINT16 dataSize)
+void PacketManager::ProcessSystemConnect(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
-	User* user = nullptr;
 	mUserManager.SetUserStatus(clientIndx, USER_STATUS_INFO::ON_LINE);
 }
-void PacketManager::ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT16 dataSize)
+void PacketManager::ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
-	User* user = nullptr;
 	mUserManager.SetUserStatus(clientIndx, USER_STATUS_INFO::OFF_LINE);
 }
-void PacketManager::ProcessReceiveChat(UINT32 clientIndx, char* pData, UINT16 dataSize)
+void PacketManager::ProcessReceiveChat(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
 	ChattingPacket chat;
 	memcpy_s(&chat, sizeof(chat), pData, dataSize);
+	chat.pakcetID = PACKET_ID::PACKET_ID_SERVER_TO_CLIENT_CHATTING;
+	chat.unPacketSize = sizeof(chat);
 	mUserManager.SendToAllUser(clientIndx, (char*)&chat,sizeof(chat));
 }

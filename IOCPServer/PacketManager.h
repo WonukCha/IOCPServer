@@ -22,17 +22,17 @@ public:
 	void End();
 
 	void PushSystemInfo(UINT32 clientIndx, PACKET_ID systeminfo);
-	void PushReceiveData(UINT32 clientIndx, char* pData, UINT16 dwDataSize);
+	void PushReceiveData(UINT32 clientIndx, char* pData, UINT32 dataSize);
 
-	std::function<void(UINT32, char*, UINT16)> SendPacketFunc;
+	std::function<void(UINT32, char*, UINT32)> SendPacketFunc;
 private:
-	void ProcessSystemConnect(UINT32 clientIndx, char* pData, UINT16 dataSize);
-	void ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT16 dataSize);
-	void ProcessReceiveChat(UINT32 clientIndx, char* pData, UINT16 dataSize);
+	void ProcessSystemConnect(UINT32 clientIndx, char* pData, UINT32 dataSize);
+	void ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT32 dataSize);
+	void ProcessReceiveChat(UINT32 clientIndx, char* pData, UINT32 dataSize);
 
 	void PacketProcess();
 
-	typedef void(PacketManager::* PROCESS_RECV_PACKET_FUNCTION)(UINT32,char*,UINT16);
+	typedef void(PacketManager::* PROCESS_RECV_PACKET_FUNCTION)(UINT32,char*, UINT32);
 	std::unordered_map<int, PROCESS_RECV_PACKET_FUNCTION> mProcMap;
 
 	UserManager mUserManager;

@@ -3,29 +3,29 @@
 void UserManager::Init(const UINT32 maxUserCount)
 {
 	std::vector<User> init(maxUserCount);
-	mUserList.swap(init);
+	mUserGroup.swap(init);
 
 	for (UINT32 i = 0; i < maxUserCount; i++)
 	{
-		mUserList[i].Init();
-		mUserList[i].SetUserIndex(i);
+		mUserGroup[i].Init();
+		mUserGroup[i].SetUserIndex(i);
 	}
 }
 User* UserManager::GetUser(const UINT32 userIndex)
 {
 	User* pResult = nullptr;
-	if (mUserList.size() > userIndex)
+	if (mUserGroup.size() > userIndex)
 	{
-		pResult = &mUserList[userIndex];
+		pResult = &mUserGroup[userIndex];
 	}
 	return pResult;
 }
 bool UserManager::InitUser(const UINT32 userIndex)
 {
 	bool bResult = false;
-	if (mUserList.size() > userIndex)
+	if (mUserGroup.size() > userIndex)
 	{
-		mUserList[userIndex].Init();
+		mUserGroup[userIndex].Init();
 		bResult = true;
 	}
 	else
@@ -36,18 +36,18 @@ bool UserManager::InitUser(const UINT32 userIndex)
 }
 void UserManager::SetUserStatus(const UINT32 userIndex, USER_STATUS_INFO info)
 {
-	if (mUserList.size() > userIndex)
+	if (mUserGroup.size() > userIndex)
 	{
-		mUserList[userIndex].Init();
-		mUserList[userIndex].SetUserStatus(info);
+		mUserGroup[userIndex].Init();
+		mUserGroup[userIndex].SetUserStatus(info);
 
 		if (info == USER_STATUS_INFO::ON_LINE)
 		{
-			mOnLineUserList.push_back(&mUserList[userIndex]);
+			mOnLineUserList.push_back(&mUserGroup[userIndex]);
 		}
 		if (info == USER_STATUS_INFO::OFF_LINE)
 		{
-			mOnLineUserList.remove_if([userIndex = mUserList[userIndex].GetUserIndex()](User* pUser) {
+			mOnLineUserList.remove_if([userIndex = mUserGroup[userIndex].GetUserIndex()](User* pUser) {
 				return userIndex == pUser->GetUserIndex();
 			});
 		}
