@@ -4,7 +4,7 @@
 
 #define SERVER_PORT 10000
 #define MAX_THREAD_COUNT 10
-#define MAX_CLIENT_COUNT 100
+#define MAX_CLIENT_COUNT 1000
 
 int main(void)
 {

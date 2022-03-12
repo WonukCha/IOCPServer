@@ -2,7 +2,9 @@
 #include <basetsd.h>
 
 constexpr UINT16 USER_BUFFER_SIZE = 1204;
-constexpr UINT16 CHAT_SIZE = 255;
+constexpr UINT16 CHAT_SIZE = 512;
+constexpr UINT16 NAME_SIZE = 255;
+
 
 enum class USER_STATUS_INFO : UINT8
 {
@@ -40,6 +42,7 @@ struct PacketHeader
 
 struct ChattingPacket : public PacketHeader
 {
+	char cName[NAME_SIZE] = { '\0', };
 	char cChat[CHAT_SIZE] = {'\0',};
 };
 

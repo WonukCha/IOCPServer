@@ -23,5 +23,5 @@ private:
 	USER_STATUS_INFO mUserStatus = USER_STATUS_INFO::NONE;
 	std::string mId;
 	RingBufferLock mRecvBuffer;
-	char mStageBuffer[USER_BUFFER_SIZE];
+	char mStageBuffer[USER_BUFFER_SIZE] = {'\0',};
 };
