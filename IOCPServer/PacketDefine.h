@@ -15,10 +15,10 @@ enum class USER_STATUS_INFO : UINT8
 
 enum class PACKET_ID : UINT16
 {
-	PACKET_ID_DISCONNECT = 0,
+	PACKET_ID_DISCONNECT = 100,
 	PACKET_ID_CONNECT,
 
-	PACKET_ID_CLIENT_TO_SERVER_CHATTING = 100,
+	PACKET_ID_CLIENT_TO_SERVER_CHATTING = 200,
 	PACKET_ID_SERVER_TO_CLIENT_CHATTING,
 	PACKET_ID_END
 
@@ -43,7 +43,8 @@ struct PacketHeader
 struct ChattingPacket : public PacketHeader
 {
 	char cName[NAME_SIZE] = { '\0', };
-	char cChat[CHAT_SIZE] = {'\0',};
+	char cChat[CHAT_SIZE] = { '\0', };
+	unsigned __int64 ulTickCount = 0;
 };
 
 #pragma pack(pop)
