@@ -197,7 +197,7 @@ bool ClientInfo::SendMsg(const unsigned __int64 uiMsgSize, void* pMsg)
 }
 void ClientInfo::SendCompleted(const unsigned int uiMsgSize)
 {
-	std::cout << "Client : " << GetClientIndex() << ", Send Size : " << uiMsgSize << "\r\n";
+	//std::cout << "Client : " << GetClientIndex() << ", Send Size : " << uiMsgSize << "\r\n";
 
 	mSendRingbuffer.DeleteData(uiMsgSize);
 	if (mSendRingbuffer.GetSize() > 0)
@@ -224,7 +224,6 @@ bool ClientInfo::SendIO()
 			std::cout << "[Error] SendIO - SendRingBuf \r\n";
 			break;
 		}
-		mSendRingbuffer.GetData(mSendBuf, szSendSize);
 
 		mSendOverlappedEx.m_wsaBuf.buf = mSendBuf;
 		mSendOverlappedEx.m_wsaBuf.len = static_cast<ULONG>(szSendSize);

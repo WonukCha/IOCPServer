@@ -14,7 +14,7 @@ void ChatServer::OnClose(unsigned int clientIndx)
 }
 void ChatServer::OnReceive(unsigned int clientIndx, char* pData, DWORD dwDataSize)
 {
-	std::cout << "OnReceive : " << clientIndx << "\r\n";
+	//std::cout << "OnReceive : " << clientIndx << " Size :"<< dwDataSize << "\r\n";
 	mPacketManager.PushReceiveData(clientIndx, pData, dwDataSize);
 }
 void ChatServer::Run(const unsigned int MaxClientCount)
