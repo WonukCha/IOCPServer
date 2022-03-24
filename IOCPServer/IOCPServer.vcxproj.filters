@@ -19,60 +19,69 @@
     <Filter Include="소스 파일\ChatServer">
       <UniqueIdentifier>{c338f2d5-f423-4079-863d-ad82b84a1610}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Common">
+      <UniqueIdentifier>{e8b389a3-317e-4ca1-b686-91fe9dc8039f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IOCPServer.h">
-      <Filter>소스 파일\IOCPServer</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientInfo.h">
-      <Filter>소스 파일\IOCPServer</Filter>
-    </ClInclude>
-    <ClInclude Include="Define.h">
-      <Filter>소스 파일\IOCPServer</Filter>
-    </ClInclude>
-    <ClInclude Include="RingBuffer.hpp">
-      <Filter>소스 파일\IOCPServer</Filter>
-    </ClInclude>
-    <ClInclude Include="RingBufferLock.hpp">
-      <Filter>소스 파일\IOCPServer</Filter>
-    </ClInclude>
-    <ClInclude Include="ChatServer.h">
-      <Filter>소스 파일\ChatServer</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketManager.h">
-      <Filter>소스 파일\ChatServer</Filter>
-    </ClInclude>
-    <ClInclude Include="UserManager.h">
-      <Filter>소스 파일\ChatServer</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketDefine.h">
-      <Filter>소스 파일\ChatServer</Filter>
-    </ClInclude>
-    <ClInclude Include="User.h">
-      <Filter>소스 파일\ChatServer</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="IOCPServer.cpp">
-      <Filter>소스 파일\IOCPServer</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ClientInfo.cpp">
+    <ClCompile Include="ChatServer\ChatServer.cpp">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatServer\PacketManager.cpp">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatServer\User.cpp">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatServer\UserManager.cpp">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPServer\ClientInfo.cpp">
       <Filter>소스 파일\IOCPServer</Filter>
     </ClCompile>
-    <ClCompile Include="ChatServer.cpp">
-      <Filter>소스 파일\ChatServer</Filter>
+    <ClCompile Include="IOCPServer\IOCPServer.cpp">
+      <Filter>소스 파일\IOCPServer</Filter>
     </ClCompile>
-    <ClCompile Include="PacketManager.cpp">
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ChatServer\ChatServer.h">
       <Filter>소스 파일\ChatServer</Filter>
-    </ClCompile>
-    <ClCompile Include="UserManager.cpp">
+    </ClInclude>
+    <ClInclude Include="ChatServer\PacketDefine.h">
       <Filter>소스 파일\ChatServer</Filter>
-    </ClCompile>
-    <ClCompile Include="User.cpp">
+    </ClInclude>
+    <ClInclude Include="ChatServer\PacketManager.h">
       <Filter>소스 파일\ChatServer</Filter>
-    </ClCompile>
+    </ClInclude>
+    <ClInclude Include="ChatServer\User.h">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatServer\UserManager.h">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPServer\ClientInfo.h">
+      <Filter>소스 파일\IOCPServer</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPServer\Define.h">
+      <Filter>소스 파일\IOCPServer</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPServer\IOCPServer.h">
+      <Filter>소스 파일\IOCPServer</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\RingBuffer.hpp">
+      <Filter>소스 파일\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\RingBufferLock.hpp">
+      <Filter>소스 파일\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\zlib.h">
+      <Filter>소스 파일\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\zconf.h">
+      <Filter>소스 파일\Common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

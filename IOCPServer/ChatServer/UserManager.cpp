@@ -62,6 +62,7 @@ void UserManager::SendToAllUser(UINT32 clientIndex, const char* pData, UINT16 da
 
 		if (user->GetUserStatus() == USER_STATUS_INFO::OFF_LINE)
 			continue;
+		//UINT32 index = user->GetUserIndex();
 
 		SendPacketFunc(user->GetUserIndex(), (char*)pData, dataSize);
 	}

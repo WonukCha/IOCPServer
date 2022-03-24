@@ -3,10 +3,10 @@
 void PacketManager::Init(const UINT32 maxClientCount)
 {
 
-	mProcMap[static_cast<int>(PACKET_ID::PACKET_ID_DISCONNECT)] = &PacketManager::ProcessSystemDisonnect;
-	mProcMap[static_cast<int>(PACKET_ID::PACKET_ID_CONNECT)]= &PacketManager::ProcessSystemConnect;
+	mProcMap[static_cast<int>(PACKET_ID::DISCONNECT)] = &PacketManager::ProcessSystemDisonnect;
+	mProcMap[static_cast<int>(PACKET_ID::CONNECT)]= &PacketManager::ProcessSystemConnect;
 
-	mProcMap[static_cast<int>(PACKET_ID::PACKET_ID_CLIENT_TO_SERVER_CHATTING)]= &PacketManager::ProcessReceiveChat;
+	mProcMap[static_cast<int>(PACKET_ID::CLIENT_TO_SERVER_CHATTING)]= &PacketManager::ProcessReceiveChat;
 
 	mUserManager.SendPacketFunc = SendPacketFunc;
 	mUserManager.Init(maxClientCount);
@@ -53,7 +53,7 @@ void PacketManager::PacketProcess()
 		if (!mUserReceiveEventQueue.empty())
 		{
 			UINT32 userIndex = UINT32_MAX;
-			PacketInfo info;
+			PacketInfo* info = nullptr;
 			std::queue<UINT32> queue;
 			User* user = nullptr;
 			mUserReceiveEventQueueLock.lock();
@@ -68,10 +68,14 @@ void PacketManager::PacketProcess()
 				{
 					info = user->GetPacketInfo();
 				}
-				auto iter = mProcMap.find(info.packetId);
+				if (info->packetId != static_cast<UINT16>(PACKET_ID::CLIENT_TO_SERVER_CHATTING))
+				{
+					continue;
+				}
+				auto iter = mProcMap.find(info->packetId);
 				if (iter != mProcMap.end())
 				{
-					(this->*(iter->second))(info.clientNum, info.pData, info.dataSize);
+					(this->*(iter->second))(info->clientNum, info->pData, info->dataSize);
 				}
 			}
 		}
@@ -97,7 +101,11 @@ void PacketManager::PushReceiveData(UINT32 clientIndx, char* pData, UINT32 dataS
 	user = mUserManager.GetUser(clientIndx);
 	if (user != nullptr)
 	{
-		user->PushLowData(pData, dataSize);
+		if (user->PushLowData(pData, dataSize) == false)
+		{
+			std::cout<< "PushReceiveData Fail\r\n";
+			return;
+		}
 		mUserReceiveEventQueueLock.lock();
 		mUserReceiveEventQueue.push(clientIndx);
 		mUserReceiveEventQueueLock.unlock();
@@ -114,9 +122,22 @@ void PacketManager::ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT3
 }
 void PacketManager::ProcessReceiveChat(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
-	ChattingPacket chat;
-	memcpy_s(&chat, sizeof(chat), pData, dataSize);
-	chat.pakcetID = PACKET_ID::PACKET_ID_SERVER_TO_CLIENT_CHATTING;
-	chat.unPacketSize = sizeof(chat);
-	mUserManager.SendToAllUser(clientIndx, (char*)&chat,sizeof(chat));
+	//ChattingPacket chat;
+	//memcpy_s(&chat, sizeof(chat), pData, dataSize);
+	//chat.pakcetID = PACKET_ID::SERVER_TO_CLIENT_CHATTING;
+	//chat.compressType = COMPRESS_TYPE::ZLIB;
+	//chat.packetSize = sizeof(chat);
+	//
+	//uLongf destSize = sizeof(mCompressBuffer);
+	//int zResult = compress((Bytef*)(mCompressBuffer + sizeof(PacketHeader)),&destSize,
+	//	(Bytef*)(&chat.cName),sizeof(chat)-sizeof(PacketHeader));
+	//
+	//chat.packetSize = sizeof(PacketHeader) + destSize;
+	//memcpy_s(mCompressBuffer,sizeof(mCompressBuffer), &chat, sizeof(PacketHeader));
+	//
+	//mUserManager.SendToAllUser(clientIndx, (char*)&mCompressBuffer, chat.packetSize);
+
+	PACKET_ID id = PACKET_ID::SERVER_TO_CLIENT_CHATTING;
+	memcpy(pData, &id,sizeof(id));
+	mUserManager.SendToAllUser(clientIndx, (char*)pData, dataSize);
 }

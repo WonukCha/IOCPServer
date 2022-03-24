@@ -3,14 +3,14 @@
 
 void ChatServer::OnConnect(unsigned int clientIndx)
 {
-	std::cout << "OnConnect : " << clientIndx << "\r\n";
-	mPacketManager.PushSystemInfo(clientIndx, PACKET_ID::PACKET_ID_CONNECT);
+	//std::cout << "OnConnect : " << clientIndx << "\r\n";
+	mPacketManager.PushSystemInfo(clientIndx, PACKET_ID::CONNECT);
 
 }
 void ChatServer::OnClose(unsigned int clientIndx)
 {
-	std::cout << "OnClose : " << clientIndx << "\r\n";
-	mPacketManager.PushSystemInfo(clientIndx, PACKET_ID::PACKET_ID_DISCONNECT);
+	//std::cout << "OnClose : " << clientIndx << "\r\n";
+	mPacketManager.PushSystemInfo(clientIndx, PACKET_ID::DISCONNECT);
 }
 void ChatServer::OnReceive(unsigned int clientIndx, char* pData, DWORD dwDataSize)
 {
@@ -21,7 +21,10 @@ void ChatServer::Run(const unsigned int MaxClientCount)
 {
 	auto sendPacketFunc = [&](UINT32 clientIndex, char* pSendPacket, UINT32 packetSize)
 	{
-		SendMsg(clientIndex, packetSize, pSendPacket);
+		if (SendMsg(clientIndex, packetSize, pSendPacket) == false)
+		{
+			std::cout << "sendPacketFunc Faile\r\n";
+		}
 	};
 	mPacketManager.SendPacketFunc = sendPacketFunc;
 	mPacketManager.Init(MaxClientCount);

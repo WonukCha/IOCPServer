@@ -4,7 +4,7 @@
 
 #define SERVER_PORT 10000
 #define MAX_THREAD_COUNT 10
-#define MAX_CLIENT_COUNT 1000
+#define MAX_CLIENT_COUNT 500
 
 int main(void)
 {
@@ -21,7 +21,7 @@ int main(void)
 
 		if (inputCmd == "quit")
 		{
-			break;
+			break; 
 		}
 	}
 	chatServer.End();

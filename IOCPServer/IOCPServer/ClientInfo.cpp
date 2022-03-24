@@ -145,7 +145,7 @@ UINT64 ClientInfo::GetLatestClosedTimeSec()
 }
 bool ClientInfo::PostAccept(SOCKET listenSock_, const UINT64 curTimeSec_)
 {
-	std::cout << "PostAccept. client Index: "<< GetClientIndex() << "\r\n";
+	//std::cout << "PostAccept. client Index: "<< GetClientIndex() << "\r\n";
 
 	bool bResult = false;
 

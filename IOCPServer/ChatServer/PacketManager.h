@@ -4,12 +4,14 @@
 #include <queue>
 #include <mutex>
 #include <functional>
+#include <iostream>
 
 #include <basetsd.h>
 #include <WTypesbase.h>
 
 #include "PacketDefine.h"
 #include "UserManager.h"
+#include "zlib.h"
 
 class PacketManager
 {
@@ -45,5 +47,7 @@ private:
 
 	bool mIsRunProcessThread;
 	std::thread mProcessThread;
+
+	char mCompressBuffer[USER_BUFFER_SIZE] = {'\0'};
 };
 

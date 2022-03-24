@@ -42,12 +42,12 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -100,10 +100,15 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>./Common;./IOCPServer;./ChatServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>./Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlib.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -124,40 +129,48 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>./Common;./IOCPServer;./ChatServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>./Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlib.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ChatServer.cpp" />
-    <ClCompile Include="ClientInfo.cpp" />
-    <ClCompile Include="IOCPServer.cpp" />
+    <ClCompile Include="ChatServer\ChatServer.cpp" />
+    <ClCompile Include="ChatServer\PacketManager.cpp" />
+    <ClCompile Include="ChatServer\User.cpp" />
+    <ClCompile Include="ChatServer\UserManager.cpp" />
+    <ClCompile Include="IOCPServer\ClientInfo.cpp" />
+    <ClCompile Include="IOCPServer\IOCPServer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PacketManager.cpp" />
-    <ClCompile Include="User.cpp" />
-    <ClCompile Include="UserManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ChatServer.h" />
-    <ClInclude Include="ClientInfo.h" />
-    <ClInclude Include="Define.h" />
-    <ClInclude Include="IOCPServer.h" />
-    <ClInclude Include="PacketDefine.h" />
-    <ClInclude Include="PacketManager.h" />
-    <ClInclude Include="RingBuffer.hpp" />
-    <ClInclude Include="RingBufferLock.hpp" />
-    <ClInclude Include="User.h" />
-    <ClInclude Include="UserManager.h" />
+    <ClInclude Include="ChatServer\ChatServer.h" />
+    <ClInclude Include="ChatServer\PacketDefine.h" />
+    <ClInclude Include="ChatServer\PacketManager.h" />
+    <ClInclude Include="ChatServer\User.h" />
+    <ClInclude Include="ChatServer\UserManager.h" />
+    <ClInclude Include="Common\RingBuffer.hpp" />
+    <ClInclude Include="Common\RingBufferLock.hpp" />
+    <ClInclude Include="Common\zconf.h" />
+    <ClInclude Include="Common\zlib.h" />
+    <ClInclude Include="IOCPServer\ClientInfo.h" />
+    <ClInclude Include="IOCPServer\Define.h" />
+    <ClInclude Include="IOCPServer\IOCPServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

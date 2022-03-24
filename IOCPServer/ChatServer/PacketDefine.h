@@ -1,10 +1,18 @@
 #pragma once
 #include <basetsd.h>
+#include <map>
+
 
 constexpr UINT16 USER_BUFFER_SIZE = 1204;
-constexpr UINT16 CHAT_SIZE = 512;
-constexpr UINT16 NAME_SIZE = 255;
+constexpr UINT16 CHAT_SIZE = 256;
+constexpr UINT16 NAME_SIZE = 256;
 
+enum class COMPRESS_TYPE : UINT8
+{
+	NONE = 0,
+	ZLIB,
+	END
+};
 
 enum class USER_STATUS_INFO : UINT8
 {
@@ -15,14 +23,13 @@ enum class USER_STATUS_INFO : UINT8
 
 enum class PACKET_ID : UINT16
 {
-	PACKET_ID_START,
-	PACKET_ID_DISCONNECT = 100,
-	PACKET_ID_CONNECT,
+	START,
+	DISCONNECT = 100,
+	CONNECT,
 
-	PACKET_ID_CLIENT_TO_SERVER_CHATTING = 200,
-	PACKET_ID_SERVER_TO_CLIENT_CHATTING,
-	PACKET_ID_END
-
+	CLIENT_TO_SERVER_CHATTING = 200,
+	SERVER_TO_CLIENT_CHATTING,
+	END
 };
 
 struct PacketInfo
@@ -32,13 +39,13 @@ struct PacketInfo
 	UINT16 dataSize = 0;
 	char* pData = nullptr;
 };
-
 #pragma pack(push, 1)
 
 struct PacketHeader
 {
 	PACKET_ID pakcetID;
-	UINT16	unPacketSize;
+	UINT16	packetSize;
+	COMPRESS_TYPE	compressType;
 };
 
 struct ChattingPacket : public PacketHeader
