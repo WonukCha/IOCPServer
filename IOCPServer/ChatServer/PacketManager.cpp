@@ -67,19 +67,18 @@ void PacketManager::PacketProcess()
 				if (user)
 				{
 					info = user->GetPacketInfo();
-				}
-				if (info->packetId != static_cast<UINT16>(PACKET_ID::CLIENT_TO_SERVER_CHATTING))
-				{
-					continue;
-				}
-				auto iter = mProcMap.find(info->packetId);
-				if (iter != mProcMap.end())
-				{
-					(this->*(iter->second))(info->clientNum, info->pData, info->dataSize);
+					if (info->packetId != static_cast<UINT16>(PACKET_ID::CLIENT_TO_SERVER_CHATTING))
+					{
+						continue;
+					}
+					auto iter = mProcMap.find(info->packetId);
+					if (iter != mProcMap.end())
+					{
+						(this->*(iter->second))(info->clientNum, info->pData, info->dataSize);
+					}
 				}
 			}
 		}
-
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
