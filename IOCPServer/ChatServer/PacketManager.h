@@ -39,8 +39,10 @@ private:
 	void ProcessEnterRoom(UINT32 clientIndx, char* pData, UINT32 dataSize);
 	void ProcessLeaveRoom(UINT32 clientIndx, char* pData, UINT32 dataSize);
 	
-
 	void PacketProcess();
+
+	INT16 CompressPacket(void* pDest,rsize_t* pDestSize, PacketInfo* pPacketInfo, COMPRESS_TYPE compressType);
+	INT16 UncompressPacket(void* pDest, rsize_t* pDestSize, PacketInfo* pPacketInfo);
 
 	typedef void(PacketManager::* PROCESS_RECV_PACKET_FUNCTION)(UINT32,char*, UINT32);
 	std::unordered_map<int, PROCESS_RECV_PACKET_FUNCTION> mProcMap;
@@ -56,6 +58,6 @@ private:
 	bool mIsRunProcessThread;
 	std::thread mProcessThread;
 
-	char mCompressBuffer[USER_BUFFER_SIZE] = {'\0'};
+	Bytef mCompressBuffer[USER_BUFFER_SIZE] = {'\0'};
 };
 

@@ -6,7 +6,14 @@ void PacketManager::Init(const UINT32 maxClientCount)
 	mProcMap[static_cast<int>(PACKET_ID::SYSYEM_DISCONNECT)] = &PacketManager::ProcessSystemDisonnect;
 	mProcMap[static_cast<int>(PACKET_ID::SYSYEM_CONNECT)]= &PacketManager::ProcessSystemConnect;
 
+	mProcMap[static_cast<int>(PACKET_ID::LOGIN_REQUEST)] = &PacketManager::ProcessLogin;
+
 	mProcMap[static_cast<int>(PACKET_ID::ALL_USER_CHAT_REQUEST)]= &PacketManager::ProcessAllUserChatMessage;
+
+	mProcMap[static_cast<int>(PACKET_ID::ROOM_ENTER_REQUEST)] = &PacketManager::ProcessEnterRoom;
+	mProcMap[static_cast<int>(PACKET_ID::ROOM_LEAVE_REQUEST)] = &PacketManager::ProcessLeaveRoom;
+	mProcMap[static_cast<int>(PACKET_ID::ROOM_CHAT_REQUEST)] = &PacketManager::ProcessRoomChatMessage;
+
 
 	mUserManager.SendPacketFunc = SendPacketFunc;
 	mUserManager.Init(maxClientCount);
@@ -110,14 +117,94 @@ void PacketManager::PushReceiveData(UINT32 clientIndx, char* pData, UINT32 dataS
 		mUserReceiveEventQueueLock.unlock();
 	}
 }
+INT16 PacketManager::CompressPacket(void* pDest, rsize_t* pDestSize, PacketInfo* pPacketInfo, COMPRESS_TYPE compressType)
+{
+	INT16 result = -1;
+	
+	do
+	{
+		if (pPacketInfo == nullptr)
+			break;
+
+		PACKET_HEADER* pHeader = nullptr;
+		pHeader = (PACKET_HEADER*)pPacketInfo->pData;
+
+		if (pHeader == nullptr)
+			break;
+		if (pHeader->compressType != COMPRESS_TYPE::NONE)
+			break;
+
+		Bytef* pBeginData = (Bytef*)pHeader + sizeof(PACKET_HEADER);
+		uLongf sourceLen = pHeader->packetSize - sizeof(PACKET_HEADER);
+		uLongf destLen = sizeof(mCompressBuffer);
+		switch (compressType)
+		{
+		case COMPRESS_TYPE::ZLIB:
+		{
+			result = compress(mCompressBuffer,&destLen, pBeginData, sourceLen);
+			if (mCompressBuffer != pDest)
+			{
+				memcpy_s(pDest, *pDestSize, &mCompressBuffer, destLen);
+			}
+			*pDestSize = destLen;
+		}
+		break;
+		default:
+			result = 0;
+			break;
+		}
+	} while (false);
+
+	return result;
+}
+
+INT16 PacketManager::UncompressPacket(void* pDest, rsize_t* pDestSize, PacketInfo* pPacketInfo)
+{
+	INT16 result = -1;
+	do
+	{
+		if (pPacketInfo == nullptr)
+			break;
+
+		PACKET_HEADER* pHeader = nullptr;
+		pHeader = (PACKET_HEADER*)pPacketInfo->pData;
+
+		if (pHeader == nullptr)
+			break;
+		if (pHeader->compressType == COMPRESS_TYPE::NONE)
+			break;
+
+		Bytef* pBeginData = (Bytef*)pHeader + sizeof(PACKET_HEADER);
+		uLongf sourceLen = pHeader->packetSize - sizeof(PACKET_HEADER);
+		uLongf destLen = sizeof(mCompressBuffer);
+		switch (pHeader->compressType)
+		{
+		case COMPRESS_TYPE::ZLIB:
+		{
+			result = uncompress(mCompressBuffer, &destLen, pBeginData, sourceLen);
+			if (mCompressBuffer != pDest)
+			{
+				memcpy_s(pDest, *pDestSize, &mCompressBuffer, destLen);
+			}
+			*pDestSize = destLen;
+		}
+		break;
+		default:
+			result = 0;
+			break;
+		}
+	} while (false);
+
+	return result;
+}
 
 void PacketManager::ProcessSystemConnect(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
-	mUserManager.SetUserStatus(clientIndx, USER_STATUS_INFO::ON_LINE);
+	mUserManager.SetUserStatus(clientIndx, USER_STATUS_INFO::CONNECT);
 }
 void PacketManager::ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
-	mUserManager.SetUserStatus(clientIndx, USER_STATUS_INFO::OFF_LINE);
+	mUserManager.SetUserStatus(clientIndx, USER_STATUS_INFO::DISCONECT);
 }
 void PacketManager::ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
@@ -150,15 +237,18 @@ void PacketManager::ProcessLogin(UINT32 clientIndx, char* pData, UINT32 dataSize
 {
 
 }
-void PacketManager::ProcessRoomChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize)
-{
 
-}
 void PacketManager::ProcessEnterRoom(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
 
 }
+
 void PacketManager::ProcessLeaveRoom(UINT32 clientIndx, char* pData, UINT32 dataSize)
+{
+
+}
+
+void PacketManager::ProcessRoomChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
 
 }
