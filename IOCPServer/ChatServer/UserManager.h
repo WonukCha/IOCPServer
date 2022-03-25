@@ -18,7 +18,7 @@ public:
 	void SetUserStatus(const UINT32 userIndex, USER_STATUS_INFO info);
 	void SendToAllUser(UINT32 clientIndex, const char* pData,UINT16 dataSize);
 
-	std::function<void(UINT32, char*, UINT16)> SendPacketFunc;
+	std::function<void(UINT32, char*, UINT32)> SendPacketFunc;
 private:
 	bool InitUser(const UINT32 userIndex);
 

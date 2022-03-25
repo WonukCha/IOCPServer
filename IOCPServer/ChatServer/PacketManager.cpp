@@ -67,7 +67,7 @@ void PacketManager::PacketProcess()
 				if (user)
 				{
 					info = user->GetPacketInfo();
-					if (info->packetId != static_cast<UINT16>(PACKET_ID::CLIENT_TO_SERVER_CHATTING))
+					if (info->packetId != static_cast<UINT16>(PACKET_ID::ALL_USER_CHAT_REQUEST))
 					{
 						continue;
 					}
@@ -135,9 +135,9 @@ void PacketManager::ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UI
 	//memcpy_s(mCompressBuffer,sizeof(mCompressBuffer), &chat, sizeof(PacketHeader));
 	//
 	//mUserManager.SendToAllUser(clientIndx, (char*)&mCompressBuffer, chat.packetSize);
-	PacketHeader packetHeader;
+	PACKET_HEADER packetHeader;
 	packetHeader.compressType = COMPRESS_TYPE::NONE;
-	packetHeader.packetSize = sizeof(PacketHeader);
+	packetHeader.packetSize = sizeof(PACKET_HEADER);
 	packetHeader.pakcetID = PACKET_ID::ALL_USER_CHAT_RESPONSE;
 	SendPacketFunc(clientIndx, (char*)&packetHeader, sizeof(packetHeader));
 
@@ -147,10 +147,6 @@ void PacketManager::ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UI
 }
 
 void PacketManager::ProcessLogin(UINT32 clientIndx, char* pData, UINT32 dataSize)
-{
-
-}
-void PacketManager::ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
 
 }

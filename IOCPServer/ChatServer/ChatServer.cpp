@@ -4,13 +4,13 @@
 void ChatServer::OnConnect(unsigned int clientIndx)
 {
 	//std::cout << "OnConnect : " << clientIndx << "\r\n";
-	mPacketManager.PushSystemInfo(clientIndx, PACKET_ID::CONNECT);
+	mPacketManager.PushSystemInfo(clientIndx, PACKET_ID::SYSYEM_CONNECT);
 
 }
 void ChatServer::OnClose(unsigned int clientIndx)
 {
 	//std::cout << "OnClose : " << clientIndx << "\r\n";
-	mPacketManager.PushSystemInfo(clientIndx, PACKET_ID::DISCONNECT);
+	mPacketManager.PushSystemInfo(clientIndx, PACKET_ID::SYSYEM_DISCONNECT);
 }
 void ChatServer::OnReceive(unsigned int clientIndx, char* pData, DWORD dwDataSize)
 {

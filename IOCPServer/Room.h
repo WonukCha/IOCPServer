@@ -14,7 +14,7 @@ public:
 	bool EnterUser(User* user);
 	bool LeaveUser(User* user);
 
-	std::function<void(UINT32, char*, UINT16)> SendPacketFunc;
+	std::function<void(UINT32, char*, UINT32)> SendPacketFunc;
 private:
 	void SendToAllUser(UINT32 clientIndex, const char* pData, UINT16 dataSize);
 

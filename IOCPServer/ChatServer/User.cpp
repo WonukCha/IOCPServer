@@ -25,10 +25,10 @@ PacketInfo* User::GetPacketInfo()
 	{
 		//memset(&mStagePacketInfo, 0, sizeof(mStagePacketInfo));
 
-		if (mRecvBuffer.GetSize() < sizeof(PacketHeader))
+		if (mRecvBuffer.GetSize() < sizeof(PACKET_HEADER))
 			break;
 
-		PacketHeader header;
+		PACKET_HEADER header;
 		mRecvBuffer.GetData(&header,sizeof(header),rbuf_opt_e::RBUF_NO_CLEAR);
 
 		//if (CheckPacketHeader(&header) == false)
@@ -84,7 +84,7 @@ UINT32 User::GetUserIndex()
 {
 	return mUserIndex;
 }
-bool User::CheckPacketHeader(PacketHeader* header)
+bool User::CheckPacketHeader(PACKET_HEADER* header)
 {
 	bool result = false;
 	do
@@ -94,9 +94,9 @@ bool User::CheckPacketHeader(PacketHeader* header)
 			std::cout << "[ERROR] compressType error\r\n";
 			break;
 		}
-		if (header->pakcetID == PACKET_ID::CLIENT_TO_SERVER_CHATTING)
+		if (header->pakcetID == PACKET_ID::ALL_USER_CHAT_REQUEST)
 		{
-			if (header->packetSize > sizeof(ChattingPacket))
+			if (header->packetSize > sizeof(ALL_USER_CHAT_REQUEST))
 			{
 				std::cout << "[ERROR] packetSize error\r\n";
 				break;

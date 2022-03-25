@@ -13,7 +13,7 @@ public:
 	bool LeaveRoomUser(UINT16 roomNumber, User* user);
 
 	Room* GetRoomByNumeber(UINT16 roomNumber);
-	std::function<void(UINT32, char*, UINT16)> SendPacketFunc;
+	std::function<void(UINT32, char*, UINT32)> SendPacketFunc;
 private:
 	std::vector<Room> mRoomGroup;
 

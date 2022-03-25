@@ -26,7 +26,7 @@ public:
 	void LeaveRoom();
 	UINT16 GetCurrentRoom();
 private:
-	bool CheckPacketHeader(PacketHeader* header);
+	bool CheckPacketHeader(PACKET_HEADER* header);
 	 
 	UINT32 mUserIndex = UINT32_MAX;
 	USER_STATUS_INFO mUserStatus = USER_STATUS_INFO::NONE;
