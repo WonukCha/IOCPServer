@@ -3,10 +3,10 @@
 void PacketManager::Init(const UINT32 maxClientCount)
 {
 
-	mProcMap[static_cast<int>(PACKET_ID::DISCONNECT)] = &PacketManager::ProcessSystemDisonnect;
-	mProcMap[static_cast<int>(PACKET_ID::CONNECT)]= &PacketManager::ProcessSystemConnect;
+	mProcMap[static_cast<int>(PACKET_ID::SYSYEM_DISCONNECT)] = &PacketManager::ProcessSystemDisonnect;
+	mProcMap[static_cast<int>(PACKET_ID::SYSYEM_CONNECT)]= &PacketManager::ProcessSystemConnect;
 
-	mProcMap[static_cast<int>(PACKET_ID::CLIENT_TO_SERVER_CHATTING)]= &PacketManager::ProcessReceiveChat;
+	mProcMap[static_cast<int>(PACKET_ID::ALL_USER_CHAT_REQUEST)]= &PacketManager::ProcessAllUserChatMessage;
 
 	mUserManager.SendPacketFunc = SendPacketFunc;
 	mUserManager.Init(maxClientCount);
@@ -119,7 +119,7 @@ void PacketManager::ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT3
 {
 	mUserManager.SetUserStatus(clientIndx, USER_STATUS_INFO::OFF_LINE);
 }
-void PacketManager::ProcessReceiveChat(UINT32 clientIndx, char* pData, UINT32 dataSize)
+void PacketManager::ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize)
 {
 	//ChattingPacket chat;
 	//memcpy_s(&chat, sizeof(chat), pData, dataSize);
@@ -135,8 +135,34 @@ void PacketManager::ProcessReceiveChat(UINT32 clientIndx, char* pData, UINT32 da
 	//memcpy_s(mCompressBuffer,sizeof(mCompressBuffer), &chat, sizeof(PacketHeader));
 	//
 	//mUserManager.SendToAllUser(clientIndx, (char*)&mCompressBuffer, chat.packetSize);
+	PacketHeader packetHeader;
+	packetHeader.compressType = COMPRESS_TYPE::NONE;
+	packetHeader.packetSize = sizeof(PacketHeader);
+	packetHeader.pakcetID = PACKET_ID::ALL_USER_CHAT_RESPONSE;
+	SendPacketFunc(clientIndx, (char*)&packetHeader, sizeof(packetHeader));
 
-	PACKET_ID id = PACKET_ID::SERVER_TO_CLIENT_CHATTING;
+	PACKET_ID id = PACKET_ID::ALL_USER_CHAT_NOTIFY;
 	memcpy(pData, &id,sizeof(id));
 	mUserManager.SendToAllUser(clientIndx, (char*)pData, dataSize);
+}
+
+void PacketManager::ProcessLogin(UINT32 clientIndx, char* pData, UINT32 dataSize)
+{
+
+}
+void PacketManager::ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize)
+{
+
+}
+void PacketManager::ProcessRoomChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize)
+{
+
+}
+void PacketManager::ProcessEnterRoom(UINT32 clientIndx, char* pData, UINT32 dataSize)
+{
+
+}
+void PacketManager::ProcessLeaveRoom(UINT32 clientIndx, char* pData, UINT32 dataSize)
+{
+
 }

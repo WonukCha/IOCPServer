@@ -6,6 +6,8 @@
 #include "PacketDefine.h"
 #include "zlib.h"
 
+constexpr UINT16 USER_BUFFER_SIZE = 1204;
+
 class User
 {
 public:
@@ -29,7 +31,9 @@ private:
 	UINT32 mUserIndex = UINT32_MAX;
 	USER_STATUS_INFO mUserStatus = USER_STATUS_INFO::NONE;
 	UINT16 mRoomNumber = UINT16_MAX;;
+
 	std::string mId;
+
 	RingBufferLock mRecvBuffer;
 	PacketInfo mStagePacketInfo;
 	char mCompressBuffer[USER_BUFFER_SIZE] = { '\0', };

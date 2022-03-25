@@ -30,7 +30,15 @@ public:
 private:
 	void ProcessSystemConnect(UINT32 clientIndx, char* pData, UINT32 dataSize);
 	void ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT32 dataSize);
-	void ProcessReceiveChat(UINT32 clientIndx, char* pData, UINT32 dataSize);
+
+	void ProcessLogin(UINT32 clientIndx, char* pData, UINT32 dataSize);
+
+	void ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize);
+	void ProcessRoomChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize);
+
+	void ProcessEnterRoom(UINT32 clientIndx, char* pData, UINT32 dataSize);
+	void ProcessLeaveRoom(UINT32 clientIndx, char* pData, UINT32 dataSize);
+	
 
 	void PacketProcess();
 

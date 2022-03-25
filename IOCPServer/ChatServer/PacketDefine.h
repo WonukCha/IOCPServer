@@ -3,9 +3,10 @@
 #include <map>
 
 
-constexpr UINT16 USER_BUFFER_SIZE = 1204;
-constexpr UINT16 CHAT_SIZE = 256;
-constexpr UINT16 NAME_SIZE = 256;
+constexpr UINT16 CHAT_SIZE = 255 + 1;
+constexpr UINT16 NAME_SIZE = 255 + 1;
+constexpr UINT16 ID_SIZE = 255 + 1;
+constexpr UINT16 PW_SIZE = 255 + 1;
 
 enum class COMPRESS_TYPE : UINT8
 {
@@ -24,11 +25,25 @@ enum class USER_STATUS_INFO : UINT8
 enum class PACKET_ID : UINT16
 {
 	START,
-	DISCONNECT = 100,
-	CONNECT,
+	SYSYEM_DISCONNECT = 100,
+	SYSYEM_CONNECT,
 
-	CLIENT_TO_SERVER_CHATTING = 200,
-	SERVER_TO_CLIENT_CHATTING,
+	LOGIN_REQUEST = 200,
+	LOGIN_RESPONSE,
+
+	ALL_USER_CHAT_REQUEST = 300,
+	ALL_USER_CHAT_RESPONSE,
+	ALL_USER_CHAT_NOTIFY,
+
+	ROOM_ENTER_REQUEST,
+	ROOM_ENTER_RESPONSE,
+
+	ROOM_LEAVE_REQUEST,
+	ROOM_LEAVE_RESPONSE,
+
+	ROOM_CHAT_REQUEST,
+	ROOM_CHAT_RESPONSE,
+	ROOM_CHAT_NOTIFY,
 	END
 };
 
@@ -41,18 +56,68 @@ struct PacketInfo
 };
 #pragma pack(push, 1)
 
-struct PacketHeader
+struct PACKET_HEADER
 {
 	PACKET_ID pakcetID;
 	UINT16	packetSize;
 	COMPRESS_TYPE	compressType;
+	unsigned __int64 TickCount = 0;
 };
 
-struct ChattingPacket : public PacketHeader
+struct LOGIN_REQUEST : public PACKET_HEADER
 {
-	char cName[NAME_SIZE] = { '\0', };
-	char cChat[CHAT_SIZE] = { '\0', };
-	unsigned __int64 ulTickCount = 0;
+	char ID[ID_SIZE] = { '\0', };
+	char PW[PW_SIZE] = { '\0', };
+};
+struct LOGIN_RESPONSE : public PACKET_HEADER
+{
+	INT16 Result;
 };
 
+typedef struct ALL_USER_CHAT_REQUEST : public PACKET_HEADER
+{
+	char CheckCode[NAME_SIZE] = { '\0', };
+	char Msg[CHAT_SIZE] = { '\0', };
+}ALL_USER_CHAT_NOTIFY;
+
+struct ALL_USER_CHAT_RESPONSE : public PACKET_HEADER
+{
+
+};
+
+struct ROOM_ENTER_REQUEST : public PACKET_HEADER
+{
+	UINT16 RoomNumber;
+};
+
+struct ROOM_ENTER_RESPONSE : public PACKET_HEADER
+{
+	INT16 Result;
+};
+
+struct ROOM_LEAVE_REQUEST : public PACKET_HEADER
+{
+	UINT16 RoomNumber;
+};
+
+struct ROOM_LEAVE_RESPONSE : public PACKET_HEADER
+{
+	INT16 Result;
+};
+
+struct ROOM_CHAT_REQUEST : public PACKET_HEADER
+{
+	char Msg[CHAT_SIZE] = { '\0', };
+};
+
+struct ROOM_CHAT_RESPONSE : public PACKET_HEADER
+{
+	INT16 Result;
+};
+
+struct ROOM_CHAT_NOTIFY : public PACKET_HEADER
+{
+	char ID[ID_SIZE] = { '\0', };
+	char Msg[CHAT_SIZE] = { '\0', };
+};
 #pragma pack(pop)
