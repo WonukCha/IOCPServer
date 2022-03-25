@@ -26,7 +26,12 @@ bool Room::LeaveUser(User* user)
 	return 0;
 }
 
-void Room::SendToAllUser(UINT32 clientIndex, const char* pData, UINT16 dataSize)
+void Room::Nofify(UINT32 clientIndex, const char* pData, UINT32 dataSize)
+{
+	SendToAllUser(clientIndex, pData, dataSize);
+}
+
+void Room::SendToAllUser(UINT32 clientIndex, const char* pData, UINT32 dataSize)
 {
 	for (auto user : mUserList)
 	{

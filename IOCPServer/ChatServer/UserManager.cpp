@@ -36,22 +36,50 @@ bool UserManager::InitUser(const UINT32 userIndex)
 }
 void UserManager::SetUserStatus(const UINT32 userIndex, USER_STATUS_INFO info)
 {
-	if (mUserGroup.size() > userIndex)
+	do
 	{
-		mUserGroup[userIndex].Init();
-		mUserGroup[userIndex].SetUserStatus(info);
+		if (mUserGroup.size() > userIndex)
+		{
+			User* user = nullptr;
+			user = GetUser(userIndex);
+			if (user == nullptr)
+				break;
 
-		if (info == USER_STATUS_INFO::CONNECT)
-		{
-			mOnLineUserList.push_back(&mUserGroup[userIndex]);
+			mUserGroup[userIndex].Init();
+			mUserGroup[userIndex].SetUserStatus(info);
+
+			switch (info)
+			{
+			case USER_STATUS_INFO::DISCONECT:
+			{
+				mOnLineUserList.remove_if([userIndex = mUserGroup[userIndex].GetUserIndex()](User* pUser) {
+					return userIndex == pUser->GetUserIndex();
+				});
+				user->SetUserStatus(USER_STATUS_INFO::DISCONECT);
+			}
+			break;
+			case USER_STATUS_INFO::CONNECT:
+			{
+				mOnLineUserList.push_back(&mUserGroup[userIndex]);
+				user->SetUserStatus(USER_STATUS_INFO::CONNECT);
+			}
+			break;
+			case USER_STATUS_INFO::LOBBY:
+			{
+				user->SetUserStatus(USER_STATUS_INFO::LOBBY);
+			}
+			break;
+			case USER_STATUS_INFO::ROOM:
+			{
+				user->SetUserStatus(USER_STATUS_INFO::LOBBY);
+			}
+			break;
+			default:
+				break;
+			}
 		}
-		if (info == USER_STATUS_INFO::DISCONECT)
-		{
-			mOnLineUserList.remove_if([userIndex = mUserGroup[userIndex].GetUserIndex()](User* pUser) {
-				return userIndex == pUser->GetUserIndex();
-			});
-		}
-	}
+	} while (false);
+	
 }
 void UserManager::SendToAllUser(UINT32 clientIndex, const char* pData, UINT16 dataSize)
 {

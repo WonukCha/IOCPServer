@@ -3,7 +3,7 @@
 void User::Init()
 {
 	mUserStatus = USER_STATUS_INFO::NONE;
-	mId = "";
+	mID  = "";
 	mRecvBuffer.Clear();
 	memset(mStageBuffer, 0, sizeof(mStageBuffer));
 }
@@ -136,4 +136,12 @@ void User::LeaveRoom()
 UINT16 User::GetCurrentRoom()
 {
 	return mRoomNumber;
+}
+void User::SetID(std::string id)
+{
+	mID = id;
+}
+std::string User::GetID()
+{
+	return mID;
 }

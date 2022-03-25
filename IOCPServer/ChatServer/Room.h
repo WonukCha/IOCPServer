@@ -14,9 +14,11 @@ public:
 	bool EnterUser(User* user);
 	bool LeaveUser(User* user);
 
+	void Nofify(UINT32 clientIndex, const char* pData, UINT32 dataSize);
+
 	std::function<void(UINT32, char*, UINT32)> SendPacketFunc;
 private:
-	void SendToAllUser(UINT32 clientIndex, const char* pData, UINT16 dataSize);
+	void SendToAllUser(UINT32 clientIndex, const char* pData, UINT32 dataSize);
 
 	std::list<User*> mUserList;
 	UINT16 mRoomNumber = UINT16_MAX;

@@ -25,6 +25,10 @@ public:
 	void EnterRoom(UINT16 roomNumber);
 	void LeaveRoom();
 	UINT16 GetCurrentRoom();
+
+	void SetID(std::string id);
+	std::string GetID();
+
 private:
 	bool CheckPacketHeader(PACKET_HEADER* header);
 	 
@@ -33,10 +37,9 @@ private:
 
 	USER_STATUS_INFO mUserStatus = USER_STATUS_INFO::NONE;
 
-	std::string mId;
+	std::string mID;
 
 	RingBufferLock mRecvBuffer;
 	PacketInfo mStagePacketInfo;
-	char mCompressBuffer[USER_BUFFER_SIZE] = { '\0', };
 	char mStageBuffer[USER_BUFFER_SIZE] = {'\0',};
 };

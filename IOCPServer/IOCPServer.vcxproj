@@ -152,18 +152,20 @@
   <ItemGroup>
     <ClCompile Include="ChatServer\ChatServer.cpp" />
     <ClCompile Include="ChatServer\PacketManager.cpp" />
+    <ClCompile Include="ChatServer\Room.cpp" />
+    <ClCompile Include="ChatServer\RoomManager.cpp" />
     <ClCompile Include="ChatServer\User.cpp" />
     <ClCompile Include="ChatServer\UserManager.cpp" />
     <ClCompile Include="IOCPServer\ClientInfo.cpp" />
     <ClCompile Include="IOCPServer\IOCPServer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Room.cpp" />
-    <ClCompile Include="RoomManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatServer\ChatServer.h" />
     <ClInclude Include="ChatServer\PacketDefine.h" />
     <ClInclude Include="ChatServer\PacketManager.h" />
+    <ClInclude Include="ChatServer\Room.h" />
+    <ClInclude Include="ChatServer\RoomManager.h" />
     <ClInclude Include="ChatServer\User.h" />
     <ClInclude Include="ChatServer\UserManager.h" />
     <ClInclude Include="Common\RingBuffer.hpp" />
@@ -173,8 +175,6 @@
     <ClInclude Include="IOCPServer\ClientInfo.h" />
     <ClInclude Include="IOCPServer\Define.h" />
     <ClInclude Include="IOCPServer\IOCPServer.h" />
-    <ClInclude Include="Room.h" />
-    <ClInclude Include="RoomManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

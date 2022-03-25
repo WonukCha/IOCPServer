@@ -7,6 +7,7 @@ class RoomManager
 public:
 	RoomManager() = default;
 	virtual ~RoomManager() = default;
+
 	void Init(UINT16 beginRoomNumber,UINT16 maxRoomCount,UINT16 maxRoomUserCount);
 
 	bool EnterRoomUser(UINT16 roomNumber, User* user);

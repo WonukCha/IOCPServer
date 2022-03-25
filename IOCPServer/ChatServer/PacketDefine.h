@@ -20,7 +20,7 @@ enum class USER_STATUS_INFO : UINT8
 	NONE = 0,
 	DISCONECT,
 	CONNECT,
-	LOGIN,
+	LOBBY,
 	ROOM,
 
 };

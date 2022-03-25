@@ -11,6 +11,8 @@
 
 #include "PacketDefine.h"
 #include "UserManager.h"
+#include "RoomManager.h"
+
 #include "zlib.h"
 
 class PacketManager
@@ -48,6 +50,7 @@ private:
 	std::unordered_map<int, PROCESS_RECV_PACKET_FUNCTION> mProcMap;
 
 	UserManager mUserManager;
+	RoomManager mRoomManager;
 
 	std::mutex mSystemInfoQueueLock;
 	std::queue<PacketInfo> mSystemInfoQueue;
