@@ -41,11 +41,11 @@ void UserManager::SetUserStatus(const UINT32 userIndex, USER_STATUS_INFO info)
 		mUserGroup[userIndex].Init();
 		mUserGroup[userIndex].SetUserStatus(info);
 
-		if (info == USER_STATUS_INFO::ON_LINE)
+		if (info == USER_STATUS_INFO::CONNECT)
 		{
 			mOnLineUserList.push_back(&mUserGroup[userIndex]);
 		}
-		if (info == USER_STATUS_INFO::OFF_LINE)
+		if (info == USER_STATUS_INFO::DISCONECT)
 		{
 			mOnLineUserList.remove_if([userIndex = mUserGroup[userIndex].GetUserIndex()](User* pUser) {
 				return userIndex == pUser->GetUserIndex();
@@ -57,7 +57,7 @@ void UserManager::SendToAllUser(UINT32 clientIndex, const char* pData, UINT16 da
 {
 	for (auto user : mOnLineUserList)
 	{
-		if (user->GetUserStatus() == USER_STATUS_INFO::OFF_LINE)
+		if (user->GetUserStatus() == USER_STATUS_INFO::DISCONECT)
 			continue;
 
 		SendPacketFunc(user->GetUserIndex(), (char*)pData, dataSize);

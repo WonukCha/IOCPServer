@@ -18,8 +18,11 @@ enum class COMPRESS_TYPE : UINT8
 enum class USER_STATUS_INFO : UINT8
 {
 	NONE = 0,
-	OFF_LINE,
-	ON_LINE
+	DISCONECT,
+	CONNECT,
+	LOGIN,
+	ROOM,
+
 };
 
 enum class PACKET_ID : UINT16

@@ -30,7 +30,7 @@ void Room::SendToAllUser(UINT32 clientIndex, const char* pData, UINT16 dataSize)
 {
 	for (auto user : mUserList)
 	{
-		if (user->GetUserStatus() == USER_STATUS_INFO::OFF_LINE)
+		if (user->GetUserStatus() == USER_STATUS_INFO::DISCONECT)
 			continue;
 
 		SendPacketFunc(user->GetUserIndex(), (char*)pData, dataSize);
