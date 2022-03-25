@@ -35,11 +35,13 @@ void PacketManager::End()
 }
 void PacketManager::PacketProcess()
 {
+	bool Isidle = false;
 	while (true)
 	{
 		if (mIsRunProcessThread == false)
 			break;
 
+		Isidle = true;
 		if (!mSystemInfoQueue.empty())
 		{
 			PacketInfo info;
@@ -57,6 +59,7 @@ void PacketManager::PacketProcess()
 					(this->*(iter->second))(info.clientNum,info.pData,info.dataSize);
 				}
 			}
+			Isidle = false;
 		}
 
 		if (!mUserReceiveEventQueue.empty())
@@ -87,9 +90,10 @@ void PacketManager::PacketProcess()
 					}
 				}
 			}
+			Isidle = false;
 		}
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		if(Isidle)
+			std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
 
