@@ -22,9 +22,10 @@ public:
 
 private:
 	bool CheckPacketHeader(PacketHeader* header);
-
+	 
 	UINT32 mUserIndex = UINT32_MAX;
 	USER_STATUS_INFO mUserStatus = USER_STATUS_INFO::NONE;
+	UINT16 mRoomNumber = UINT16_MAX;;
 	std::string mId;
 	RingBufferLock mRecvBuffer;
 	PacketInfo mStagePacketInfo;

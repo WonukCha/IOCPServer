@@ -57,14 +57,9 @@ void UserManager::SendToAllUser(UINT32 clientIndex, const char* pData, UINT16 da
 {
 	for (auto user : mOnLineUserList)
 	{
-		//if (user->GetUserIndex() == clientIndex)
-		//	continue;
-
 		if (user->GetUserStatus() == USER_STATUS_INFO::OFF_LINE)
 			continue;
-		//UINT32 index = user->GetUserIndex();
 
 		SendPacketFunc(user->GetUserIndex(), (char*)pData, dataSize);
 	}
 }
-

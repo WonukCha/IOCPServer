@@ -157,6 +157,8 @@
     <ClCompile Include="IOCPServer\ClientInfo.cpp" />
     <ClCompile Include="IOCPServer\IOCPServer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Room.cpp" />
+    <ClCompile Include="RoomManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatServer\ChatServer.h" />
@@ -171,6 +173,8 @@
     <ClInclude Include="IOCPServer\ClientInfo.h" />
     <ClInclude Include="IOCPServer\Define.h" />
     <ClInclude Include="IOCPServer\IOCPServer.h" />
+    <ClInclude Include="Room.h" />
+    <ClInclude Include="RoomManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

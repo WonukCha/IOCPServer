@@ -115,7 +115,7 @@ bool ClientInfo::BindRecv()
 	bool bResult = false;
 	DWORD dwFlag = 0;
 	DWORD dwRecvNumBytes = 0;
-
+ 
 	do
 	{
 		mRecvOverlappedEx.m_wsaBuf.len = MAX_SOCK_RECVBUF;
