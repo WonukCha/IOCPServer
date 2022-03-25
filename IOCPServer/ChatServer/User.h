@@ -20,6 +20,9 @@ public:
 	void SetUserIndex(UINT32 userIndex);
 	UINT32 GetUserIndex();
 
+	void EnterRoom(UINT16 roomNumber);
+	void LeaveRoom();
+	UINT16 GetCurrentRoom();
 private:
 	bool CheckPacketHeader(PacketHeader* header);
 	 

@@ -1,14 +1,21 @@
 #include "RoomManager.h"
 void RoomManager::Init(UINT16 beginRoomNumber, UINT16 maxRoomCount, UINT16 maxRoomUserCount)
 {
-	mBeginRoomNumber = beginRoomNumber;
-	mEndRoomNumber = beginRoomNumber + maxRoomCount;
-	mRoomGroup.resize(maxRoomCount);
-	for (UINT16 i = 0; i < maxRoomCount; i++)
+	do
 	{
-		mRoomGroup[i].Init(beginRoomNumber+1, maxRoomUserCount);
-		mRoomGroup[i].SendPacketFunc = SendPacketFunc;
-	}
+		if (UINT16_MAX <= static_cast<UINT32>(beginRoomNumber + maxRoomCount))
+			break;
+
+		mBeginRoomNumber = beginRoomNumber;
+		mEndRoomNumber = beginRoomNumber + maxRoomCount;
+		mRoomGroup.resize(maxRoomCount);
+		for (UINT16 i = 0; i < maxRoomCount; i++)
+		{
+			mRoomGroup[i].Init(beginRoomNumber + 1, maxRoomUserCount);
+			mRoomGroup[i].SendPacketFunc = SendPacketFunc;
+		}
+	} while (false);
+	
 }
 
 bool RoomManager::EnterRoomUser(UINT16 roomNumber, User* user)

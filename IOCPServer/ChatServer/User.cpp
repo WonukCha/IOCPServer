@@ -125,3 +125,15 @@ bool User::CheckPacketHeader(PacketHeader* header)
 
 	return result;
 }
+void User::EnterRoom(UINT16 roomNumber)
+{
+	mRoomNumber = roomNumber;
+}
+void User::LeaveRoom()
+{
+	mRoomNumber = UINT16_MAX;;
+}
+UINT16 User::GetCurrentRoom()
+{
+	return mRoomNumber;
+}
