@@ -1,3 +1,3 @@
 # IOCPServer
-ChatServer1
-- 전체채팅
+RoomChatServer
+- 방 기반 채팅
