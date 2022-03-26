@@ -306,7 +306,7 @@ void PacketManager::ProcessEnterRoom(UINT32 clientIndx, char* pData, UINT32 data
 		if (user->GetUserStatus() == USER_STATUS_INFO::LOBBY)
 		{
 			roomEnterResponse.Result = mRoomManager.EnterRoomUser(pRoomEnterRequest->RoomNumber, user);
-			if (roomEnterResponse.Result == true)
+			if (roomEnterResponse.Result == (INT16)true)
 			{
 				user->SetUserStatus(USER_STATUS_INFO::ROOM);
 			}
@@ -339,7 +339,7 @@ void PacketManager::ProcessLeaveRoom(UINT32 clientIndx, char* pData, UINT32 data
 		if (user->GetUserStatus() == USER_STATUS_INFO::ROOM)
 		{
 			roomLeaveResponse.Result = mRoomManager.LeaveRoomUser(pRoomLeaveRequest->RoomNumber, user);
-			if (roomLeaveResponse.Result == true)
+			if (roomLeaveResponse.Result == (INT16)true)
 			{
 				user->SetUserStatus(USER_STATUS_INFO::LOBBY);
 			}

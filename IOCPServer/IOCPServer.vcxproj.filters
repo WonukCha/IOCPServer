@@ -51,6 +51,9 @@
     <ClCompile Include="ChatServer\RoomManager.cpp">
       <Filter>소스 파일\ChatServer</Filter>
     </ClCompile>
+    <ClCompile Include="ChatServer\RedisManager.cpp">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatServer\ChatServer.h">
@@ -93,6 +96,12 @@
       <Filter>소스 파일\ChatServer</Filter>
     </ClInclude>
     <ClInclude Include="ChatServer\RoomManager.h">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\CRedisConn.h">
+      <Filter>소스 파일\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatServer\RedisManager.h">
       <Filter>소스 파일\ChatServer</Filter>
     </ClInclude>
   </ItemGroup>

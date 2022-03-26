@@ -95,12 +95,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>./Common;./IOCPServer;./ChatServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./Common/hiredis;./Common;./IOCPServer;./ChatServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -135,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./Common;./IOCPServer;./ChatServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./Common/hiredis;./Common;./IOCPServer;./ChatServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="ChatServer\ChatServer.cpp" />
     <ClCompile Include="ChatServer\PacketManager.cpp" />
+    <ClCompile Include="ChatServer\RedisManager.cpp" />
     <ClCompile Include="ChatServer\Room.cpp" />
     <ClCompile Include="ChatServer\RoomManager.cpp" />
     <ClCompile Include="ChatServer\User.cpp" />
@@ -164,10 +165,12 @@
     <ClInclude Include="ChatServer\ChatServer.h" />
     <ClInclude Include="ChatServer\PacketDefine.h" />
     <ClInclude Include="ChatServer\PacketManager.h" />
+    <ClInclude Include="ChatServer\RedisManager.h" />
     <ClInclude Include="ChatServer\Room.h" />
     <ClInclude Include="ChatServer\RoomManager.h" />
     <ClInclude Include="ChatServer\User.h" />
     <ClInclude Include="ChatServer\UserManager.h" />
+    <ClInclude Include="Common\CRedisConn.h" />
     <ClInclude Include="Common\RingBuffer.hpp" />
     <ClInclude Include="Common\RingBufferLock.hpp" />
     <ClInclude Include="Common\zconf.h" />

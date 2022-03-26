@@ -12,6 +12,7 @@
 #include "PacketDefine.h"
 #include "UserManager.h"
 #include "RoomManager.h"
+#include "RedisManager.h"
 
 #include "zlib.h"
 

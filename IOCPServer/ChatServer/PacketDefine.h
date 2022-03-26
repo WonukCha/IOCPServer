@@ -27,7 +27,7 @@ enum class USER_STATUS_INFO : UINT8
 
 enum class PACKET_ID : UINT16
 {
-	START,
+	NONE,
 	SYSYEM_DISCONNECT = 100,
 	SYSYEM_CONNECT,
 
@@ -61,9 +61,9 @@ struct PacketInfo
 
 struct PACKET_HEADER
 {
-	PACKET_ID pakcetID;
-	UINT16	packetSize;
-	COMPRESS_TYPE	compressType;
+	PACKET_ID pakcetID = PACKET_ID::NONE;
+	UINT16	packetSize = 0;
+	COMPRESS_TYPE	compressType = COMPRESS_TYPE::NONE;
 	unsigned __int64 TickCount = 0;
 };
 
