@@ -30,6 +30,8 @@ public:
 
 	std::function<void(UINT32, char*, UINT32)> SendPacketFunc;
 private:
+	void PacketProcess();
+
 	void ProcessSystemConnect(UINT32 clientIndx, char* pData, UINT32 dataSize);
 	void ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT32 dataSize);
 
@@ -40,8 +42,6 @@ private:
 
 	void ProcessEnterRoom(UINT32 clientIndx, char* pData, UINT32 dataSize);
 	void ProcessLeaveRoom(UINT32 clientIndx, char* pData, UINT32 dataSize);
-	
-	void PacketProcess();
 
 	INT16 CompressPacket(void* pDest,rsize_t* pDestSize, PacketInfo* pPacketInfo, COMPRESS_TYPE compressType);
 	INT16 UncompressPacket(void* pDest, rsize_t* pDestSize, PacketInfo* pPacketInfo);
