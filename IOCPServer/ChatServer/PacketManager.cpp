@@ -7,6 +7,7 @@ void PacketManager::Init(const UINT32 maxClientCount)
 	mProcMap[static_cast<int>(PACKET_ID::SYSYEM_CONNECT)]= &PacketManager::ProcessSystemConnect;
 
 	mProcMap[static_cast<int>(PACKET_ID::LOGIN_REQUEST)] = &PacketManager::ProcessLogin;
+	mProcMap[static_cast<int>(RedisTaskID::REDIS_RESPONSE_LOGIN)] = &PacketManager::ProcessLoginDBResult;
 
 	mProcMap[static_cast<int>(PACKET_ID::ALL_USER_CHAT_REQUEST)]= &PacketManager::ProcessAllUserChatMessage;
 
@@ -19,9 +20,12 @@ void PacketManager::Init(const UINT32 maxClientCount)
 	mRoomManager.SendPacketFunc = SendPacketFunc;
 	mUserManager.Init(maxClientCount);
 	mRoomManager.Init(0,10,100);
+	mRedisManager.Init(REDIS_IP, REDIS_PORT,REDIS_PASSWORD);
 }
 void PacketManager::Run()
 {
+	mRedisManager.Run();
+
 	mIsRunProcessThread = true;
 	mProcessThread = std::thread([this]() {this->PacketProcess(); });
 }
@@ -32,6 +36,7 @@ void PacketManager::End()
 	{
 		mProcessThread.join();
 	}
+	mRedisManager.End();
 }
 void PacketManager::PacketProcess()
 {
@@ -90,6 +95,24 @@ void PacketManager::PacketProcess()
 					}
 				}
 			}
+
+			if (!mRedisManager.EmptyResponseTeskQueue())
+			{
+				REDIS_RESPONSE_LOGIN redisResponse;
+				std::queue<REDIS_RESPONSE_LOGIN> redisResponseQueue;
+				mRedisManager.SwapResponseTeskQueue(&redisResponseQueue);
+
+				while (!redisResponseQueue.empty())
+				{
+					redisResponse = std::move(redisResponseQueue.front()); redisResponseQueue.pop();
+					auto iter = mProcMap.find((UINT16)redisResponse.RedisTaskId);
+					if (iter != mProcMap.end())
+					{
+						(this->*(iter->second))(redisResponse.clientNum, (char*)&redisResponse, sizeof(redisResponse));
+					}
+				}
+			}
+
 			Isidle = false;
 		}
 		if(Isidle)
@@ -258,26 +281,60 @@ void PacketManager::ProcessLogin(UINT32 clientIndx, char* pData, UINT32 dataSize
 		if (dataSize != sizeof(LOGIN_REQUEST))
 			break;
 
-		LOGIN_RESPONSE loginResponse;
-		loginResponse.TickCount = pLoginRequest->TickCount;
-		loginResponse.compressType = COMPRESS_TYPE::NONE;
-		loginResponse.pakcetID = PACKET_ID::LOGIN_RESPONSE;
-		loginResponse.packetSize = sizeof(LOGIN_RESPONSE);
 
+		REDIS_REQUEST_LOGIN redisRequest;
+		redisRequest.clientNum = clientIndx;
+		redisRequest.dataSize = sizeof(REDIS_REQUEST_LOGIN);
+		redisRequest.RedisTaskId = RedisTaskID::REDIS_REQUEST_LOGIN;
+		redisRequest.tickCount = pLoginRequest->tickCount;
+		redisRequest.pData = (char*)redisRequest.ID;
+		memcpy_s(redisRequest.ID,sizeof(redisRequest.ID), pLoginRequest->ID,sizeof(pLoginRequest->ID));
+		memcpy_s(redisRequest.PW, sizeof(redisRequest.PW), pLoginRequest->PW, sizeof(pLoginRequest->PW));
+		mRedisManager.PushRequestTesk(redisRequest);
 
-		User* user = nullptr;
-		user = mUserManager.GetUser(clientIndx);
-		if (user == nullptr)
+		//LOGIN_RESPONSE loginResponse;
+		//loginResponse.TickCount = pLoginRequest->TickCount;
+		//loginResponse.compressType = COMPRESS_TYPE::NONE;
+		//loginResponse.pakcetID = PACKET_ID::LOGIN_RESPONSE;
+		//loginResponse.packetSize = sizeof(LOGIN_RESPONSE);
+		//
+		//User* user = nullptr;
+		//user = mUserManager.GetUser(clientIndx);
+		//if (user == nullptr)
+		//	break;
+		//if (user->GetUserStatus() == USER_STATUS_INFO::CONNECT)
+		//{
+		//	user->SetUserStatus(USER_STATUS_INFO::LOBBY);
+		//	loginResponse.Result = true;
+		//}
+		//else
+		//{
+		//	loginResponse.Result = false;
+		//}
+		//SendPacketFunc(clientIndx, (char*)&loginResponse, sizeof(loginResponse));
+	} while (false);
+}
+void PacketManager::ProcessLoginDBResult(UINT32 clientIndx, char* pData, UINT32 dataSize)
+{
+	do
+	{
+		REDIS_RESPONSE_LOGIN* pRedisResponseLogin = (REDIS_RESPONSE_LOGIN*)pData;
+		if (pRedisResponseLogin == nullptr)
 			break;
-		if (user->GetUserStatus() == USER_STATUS_INFO::CONNECT)
+		if (dataSize != sizeof(REDIS_RESPONSE_LOGIN))
+			break;
+
+		LOGIN_RESPONSE loginResponse;
+		if (pRedisResponseLogin->Result == (UINT16)true)
 		{
-			user->SetUserStatus(USER_STATUS_INFO::LOBBY);
 			loginResponse.Result = true;
 		}
-		else
-		{
-			loginResponse.Result = false;
-		}
+		
+		loginResponse.compressType = COMPRESS_TYPE::NONE;
+		loginResponse.packetSize = sizeof(loginResponse);
+		loginResponse.pakcetID = PACKET_ID::LOGIN_RESPONSE;
+		loginResponse.tickCount = pRedisResponseLogin->tickCount;
+
 		SendPacketFunc(clientIndx, (char*)&loginResponse, sizeof(loginResponse));
 	} while (false);
 }
@@ -293,7 +350,7 @@ void PacketManager::ProcessEnterRoom(UINT32 clientIndx, char* pData, UINT32 data
 			break;
 
 		ROOM_ENTER_RESPONSE roomEnterResponse;
-		roomEnterResponse.TickCount = pRoomEnterRequest->TickCount;
+		roomEnterResponse.tickCount = pRoomEnterRequest->tickCount;
 		roomEnterResponse.compressType = COMPRESS_TYPE::NONE;
 		roomEnterResponse.pakcetID = PACKET_ID::ROOM_ENTER_RESPONSE;
 		roomEnterResponse.packetSize = sizeof(ROOM_ENTER_RESPONSE);
@@ -326,7 +383,7 @@ void PacketManager::ProcessLeaveRoom(UINT32 clientIndx, char* pData, UINT32 data
 			break;
 
 		ROOM_LEAVE_RESPONSE roomLeaveResponse;
-		roomLeaveResponse.TickCount = pRoomLeaveRequest->TickCount;
+		roomLeaveResponse.tickCount = pRoomLeaveRequest->tickCount;
 		roomLeaveResponse.compressType = COMPRESS_TYPE::NONE;
 		roomLeaveResponse.pakcetID = PACKET_ID::ROOM_ENTER_RESPONSE;
 		roomLeaveResponse.packetSize = sizeof(ROOM_ENTER_RESPONSE);
@@ -358,7 +415,7 @@ void PacketManager::ProcessRoomChatMessage(UINT32 clientIndx, char* pData, UINT3
 		if (dataSize != sizeof(ROOM_CHAT_REQUEST))
 			break;
 		ROOM_CHAT_RESPONSE roomChatResponse;
-		roomChatResponse.TickCount = pRoomChatRequest->TickCount;
+		roomChatResponse.tickCount = pRoomChatRequest->tickCount;
 		roomChatResponse.compressType = COMPRESS_TYPE::NONE;
 		roomChatResponse.pakcetID = PACKET_ID::ROOM_CHAT_RESPONSE;
 		roomChatResponse.packetSize = sizeof(ROOM_ENTER_RESPONSE);
@@ -374,7 +431,7 @@ void PacketManager::ProcessRoomChatMessage(UINT32 clientIndx, char* pData, UINT3
 			SendPacketFunc(clientIndx, (char*)&roomChatResponse, sizeof(roomChatResponse));
 			user->GetID();
 			ROOM_CHAT_NOTIFY roomChatNotify;
-			roomChatNotify.TickCount = pRoomChatRequest->TickCount;
+			roomChatNotify.tickCount = pRoomChatRequest->tickCount;
 			roomChatNotify.compressType = COMPRESS_TYPE::NONE;
 			roomChatNotify.pakcetID = PACKET_ID::ROOM_CHAT_NOTIFY;
 			roomChatNotify.packetSize = sizeof(ROOM_CHAT_NOTIFY);

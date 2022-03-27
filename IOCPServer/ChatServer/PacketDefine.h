@@ -64,7 +64,7 @@ struct PACKET_HEADER
 	PACKET_ID pakcetID = PACKET_ID::NONE;
 	UINT16	packetSize = 0;
 	COMPRESS_TYPE	compressType = COMPRESS_TYPE::NONE;
-	unsigned __int64 TickCount = 0;
+	unsigned __int64 tickCount = 0;
 };
 
 struct LOGIN_REQUEST : public PACKET_HEADER
@@ -74,7 +74,7 @@ struct LOGIN_REQUEST : public PACKET_HEADER
 };
 struct LOGIN_RESPONSE : public PACKET_HEADER
 {
-	INT16 Result;
+	INT16 Result = false;
 };
 
 typedef struct ALL_USER_CHAT_REQUEST : public PACKET_HEADER
@@ -90,22 +90,22 @@ struct ALL_USER_CHAT_RESPONSE : public PACKET_HEADER
 
 struct ROOM_ENTER_REQUEST : public PACKET_HEADER
 {
-	UINT16 RoomNumber;
+	UINT16 RoomNumber = UINT16_MAX;
 };
 
 struct ROOM_ENTER_RESPONSE : public PACKET_HEADER
 {
-	INT16 Result;
+	INT16 Result = 0;
 };
 
 struct ROOM_LEAVE_REQUEST : public PACKET_HEADER
 {
-	UINT16 RoomNumber;
+	UINT16 RoomNumber = UINT16_MAX;
 };
 
 struct ROOM_LEAVE_RESPONSE : public PACKET_HEADER
 {
-	INT16 Result;
+	INT16 Result = 0;
 };
 
 struct ROOM_CHAT_REQUEST : public PACKET_HEADER
@@ -115,7 +115,7 @@ struct ROOM_CHAT_REQUEST : public PACKET_HEADER
 
 struct ROOM_CHAT_RESPONSE : public PACKET_HEADER
 {
-	INT16 Result;
+	INT16 Result = 0;
 };
 
 struct ROOM_CHAT_NOTIFY : public PACKET_HEADER

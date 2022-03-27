@@ -104,5 +104,8 @@
     <ClInclude Include="ChatServer\RedisManager.h">
       <Filter>소스 파일\ChatServer</Filter>
     </ClInclude>
+    <ClInclude Include="ChatServer\RedisDefine.h">
+      <Filter>소스 파일\ChatServer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

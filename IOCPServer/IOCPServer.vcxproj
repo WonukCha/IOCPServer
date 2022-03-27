@@ -165,6 +165,7 @@
     <ClInclude Include="ChatServer\ChatServer.h" />
     <ClInclude Include="ChatServer\PacketDefine.h" />
     <ClInclude Include="ChatServer\PacketManager.h" />
+    <ClInclude Include="ChatServer\RedisDefine.h" />
     <ClInclude Include="ChatServer\RedisManager.h" />
     <ClInclude Include="ChatServer\Room.h" />
     <ClInclude Include="ChatServer\RoomManager.h" />

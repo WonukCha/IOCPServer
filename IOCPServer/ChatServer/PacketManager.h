@@ -16,6 +16,8 @@
 
 #include "zlib.h"
 
+
+
 class PacketManager
 {
 public:
@@ -37,6 +39,7 @@ private:
 	void ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT32 dataSize);
 
 	void ProcessLogin(UINT32 clientIndx, char* pData, UINT32 dataSize);
+	void ProcessLoginDBResult(UINT32 clientIndx, char* pData, UINT32 dataSize);
 
 	void ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize);
 	void ProcessRoomChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize);
@@ -52,6 +55,7 @@ private:
 
 	UserManager mUserManager;
 	RoomManager mRoomManager;
+	RedisManager mRedisManager;
 
 	std::mutex mSystemInfoQueueLock;
 	std::queue<PacketInfo> mSystemInfoQueue;
@@ -63,5 +67,9 @@ private:
 	std::thread mProcessThread;
 
 	Bytef mCompressBuffer[USER_BUFFER_SIZE] = {'\0'};
+
+	const char* REDIS_IP = "127.0.0.1";
+	const uint16_t REDIS_PORT = 6379;
+	const char* REDIS_PASSWORD = "";
 };
 
