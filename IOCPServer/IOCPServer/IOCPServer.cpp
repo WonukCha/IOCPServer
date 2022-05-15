@@ -165,7 +165,7 @@ void IOCPServer::CreateClient(const unsigned int MaxClientCount)
 	{
 		auto client = new ClientInfo();
 		client->Init(i, mIOCPHandle);
-		mClientInfos.emplace_back(std::move(client));
+		mClientInfos.emplace_back(client);
 	}
 }
 
