@@ -7,6 +7,10 @@ class ClientInfo
 public:
 	ClientInfo();
 	~ClientInfo();
+	ClientInfo(const ClientInfo& other) = default; // 복사 생성자 선언
+	ClientInfo& operator=(const ClientInfo& other) = default; // 복사 이동 연산자 선언
+	ClientInfo(ClientInfo&& other) noexcept = default; // 이동 생성자 선언
+	ClientInfo& operator=(ClientInfo&& other) noexcept = default; // 이동 복사 연산자 선언
 
 	void Init(const unsigned int idex, const HANDLE iocpHandle);
 

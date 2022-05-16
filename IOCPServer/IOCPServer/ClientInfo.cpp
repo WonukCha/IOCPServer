@@ -12,6 +12,16 @@ ClientInfo::~ClientInfo()
 
 }
 
+//ClientInfo::ClientInfo(ClientInfo&& other) noexcept // 이동 생성자 선언
+//{
+//
+//}
+//
+//ClientInfo& ClientInfo::operator=(ClientInfo&& other) noexcept // 이동 복사 연산자 선언
+//{
+//
+//}
+
 void ClientInfo::Init(const unsigned int idex, const HANDLE iocpHandle)
 {
 	mClinetIndex = idex;
