@@ -64,7 +64,7 @@ void PacketManager::PacketProcess()
 					(this->*(iter->second))(info.clientNum,info.pData,info.dataSize);
 				}
 			}
-			Isidle = false;
+			Isidle = false; 
 		}
 
 		if (!mUserReceiveEventQueue.empty())
@@ -84,10 +84,10 @@ void PacketManager::PacketProcess()
 				if (user)
 				{
 					info = user->GetPacketInfo();
-					if (info->packetId != static_cast<UINT16>(PACKET_ID::ALL_USER_CHAT_REQUEST))
-					{
-						continue;
-					}
+					//if (info->packetId != static_cast<UINT16>(PACKET_ID::ALL_USER_CHAT_REQUEST))
+					//{
+					//	continue;
+					//}
 					auto iter = mProcMap.find(info->packetId);
 					if (iter != mProcMap.end())
 					{
@@ -104,7 +104,7 @@ void PacketManager::PacketProcess()
 
 				while (!redisResponseQueue.empty())
 				{
-					redisResponse = std::move(redisResponseQueue.front()); redisResponseQueue.pop();
+					redisResponse = redisResponseQueue.front(); redisResponseQueue.pop();
 					auto iter = mProcMap.find((UINT16)redisResponse.RedisTaskId);
 					if (iter != mProcMap.end())
 					{
