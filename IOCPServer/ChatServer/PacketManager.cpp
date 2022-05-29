@@ -328,6 +328,13 @@ void PacketManager::ProcessLoginDBResult(UINT32 clientIndx, char* pData, UINT32 
 		if (pRedisResponseLogin->Result == (UINT16)true)
 		{
 			loginResponse.Result = true;
+
+			User* user = nullptr;
+			user = mUserManager.GetUser(clientIndx);
+			if (user != nullptr && user->GetUserStatus() == USER_STATUS_INFO::CONNECT)
+			{
+				user->SetUserStatus(USER_STATUS_INFO::LOBBY);
+			}
 		}
 		
 		loginResponse.compressType = COMPRESS_TYPE::NONE;

@@ -44,14 +44,14 @@ void RedisManager::RedisProcess()
 			if (mRedisRequestQueue.empty())
 				break;
 			mRedisRequestMutex.lock();
-			redisRequest = std::move(mRedisRequestQueue.front()); mRedisRequestQueue.pop();
+			redisRequest = mRedisRequestQueue.front(); mRedisRequestQueue.pop();
 			mRedisRequestMutex.unlock();
 
 			if (redisRequest.RedisTaskId != RedisTaskID::REDIS_REQUEST_LOGIN)
 				break;
 			
 			redisResponse.Result = false;
-			if (mRedisConn.get(redisRequest.ID, value) == false)
+			if (mRedisConn.get(redisRequest.ID, value) == true)
 			{
 				if (value.compare(redisRequest.PW) == 0)
 				{
@@ -65,7 +65,7 @@ void RedisManager::RedisProcess()
 			redisResponse.pData = (char*)redisResponse.Result;
 
 			mRedisResponseMutex.lock();
-			mRedisResponseQueue.push(std::move(redisResponse));
+			mRedisResponseQueue.push(redisResponse);
 			mRedisResponseMutex.unlock();
 			IsIdle = false;
 		} while (false);
@@ -82,7 +82,7 @@ bool RedisManager::PushRequestTesk(REDIS_REQUEST_LOGIN& redisRequest)
 	if (MAX_REDIS_QUEUE_SIZE > mRedisRequestQueue.size())
 	{
 		mRedisRequestMutex.lock();
-		mRedisRequestQueue.push(std::move(redisRequest));
+		mRedisRequestQueue.push(redisRequest);
 		mRedisRequestMutex.unlock();
 
 		result = true;
@@ -95,7 +95,7 @@ bool RedisManager::PopResponseTesk(REDIS_RESPONSE_LOGIN* redisResponse)
 	if (mRedisResponseQueue.empty() == false)
 	{
 		mRedisResponseMutex.lock();
-		*redisResponse = std::move(mRedisResponseQueue.front()); mRedisResponseQueue.pop();
+		*redisResponse = mRedisResponseQueue.front(); mRedisResponseQueue.pop();
 		mRedisResponseMutex.unlock();
 		result = true;
 	}
