@@ -96,26 +96,25 @@ void PacketManager::PacketProcess()
 				}
 			}
 
-			if (!mRedisManager.EmptyResponseTeskQueue())
-			{
-				REDIS_RESPONSE_LOGIN redisResponse;
-				std::queue<REDIS_RESPONSE_LOGIN> redisResponseQueue;
-				mRedisManager.SwapResponseTeskQueue(&redisResponseQueue);
+		}
+		if (!mRedisManager.EmptyResponseTeskQueue())
+		{
+			REDIS_RESPONSE_LOGIN redisResponse;
+			std::queue<REDIS_RESPONSE_LOGIN> redisResponseQueue;
+			mRedisManager.SwapResponseTeskQueue(&redisResponseQueue);
 
-				while (!redisResponseQueue.empty())
+			while (!redisResponseQueue.empty())
+			{
+				redisResponse = redisResponseQueue.front(); redisResponseQueue.pop();
+				auto iter = mProcMap.find((UINT16)redisResponse.RedisTaskId);
+				if (iter != mProcMap.end())
 				{
-					redisResponse = redisResponseQueue.front(); redisResponseQueue.pop();
-					auto iter = mProcMap.find((UINT16)redisResponse.RedisTaskId);
-					if (iter != mProcMap.end())
-					{
-						(this->*(iter->second))(redisResponse.clientNum, (char*)&redisResponse, sizeof(redisResponse));
-					}
+					(this->*(iter->second))(redisResponse.clientNum, (char*)&redisResponse, sizeof(redisResponse));
 				}
 			}
-
-			Isidle = false;
 		}
-		if(Isidle)
+		Isidle = false;
+		if (Isidle)
 			std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
@@ -372,6 +371,7 @@ void PacketManager::ProcessEnterRoom(UINT32 clientIndx, char* pData, UINT32 data
 			roomEnterResponse.Result = mRoomManager.EnterRoomUser(pRoomEnterRequest->RoomNumber, user);
 			if (roomEnterResponse.Result == (INT16)true)
 			{
+				user->EnterRoom(pRoomEnterRequest->RoomNumber);
 				user->SetUserStatus(USER_STATUS_INFO::ROOM);
 			}
 		}
@@ -392,7 +392,7 @@ void PacketManager::ProcessLeaveRoom(UINT32 clientIndx, char* pData, UINT32 data
 		ROOM_LEAVE_RESPONSE roomLeaveResponse;
 		roomLeaveResponse.tickCount = pRoomLeaveRequest->tickCount;
 		roomLeaveResponse.compressType = COMPRESS_TYPE::NONE;
-		roomLeaveResponse.pakcetID = PACKET_ID::ROOM_ENTER_RESPONSE;
+		roomLeaveResponse.pakcetID = PACKET_ID::ROOM_LEAVE_RESPONSE;
 		roomLeaveResponse.packetSize = sizeof(ROOM_ENTER_RESPONSE);
 		roomLeaveResponse.Result = false;
 		User* user = nullptr;
