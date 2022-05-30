@@ -19,11 +19,8 @@ bool Room::EnterUser(User* user)
 
 bool Room::LeaveUser(User* user)
 {
-	bool bResult = false;
-	mUserList.remove_if([user](User* pUser) {
-		return pUser == user;
-	});
-	return 0;
+	mUserList.remove_if([user](User* pUser) {return pUser == user;});
+	return true;
 }
 
 void Room::Nofify(UINT32 clientIndex, const char* pData, UINT32 dataSize)
