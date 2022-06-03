@@ -7,6 +7,7 @@ void PacketManager::Init(const UINT32 maxClientCount)
 	mProcMap[static_cast<int>(PACKET_ID::SYSYEM_CONNECT)]= &PacketManager::ProcessSystemConnect;
 
 	mProcMap[static_cast<int>(PACKET_ID::LOGIN_REQUEST)] = &PacketManager::ProcessLogin;
+	mProcMap[static_cast<int>(PACKET_ID::LOGOUT_REQUEST)] = &PacketManager::ProcessLogout;
 	mProcMap[static_cast<int>(RedisTaskID::REDIS_RESPONSE_LOGIN)] = &PacketManager::ProcessLoginDBResult;
 
 	mProcMap[static_cast<int>(PACKET_ID::ALL_USER_CHAT_REQUEST)]= &PacketManager::ProcessAllUserChatMessage;
@@ -259,11 +260,30 @@ void PacketManager::ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UI
 	//memcpy_s(mCompressBuffer,sizeof(mCompressBuffer), &chat, sizeof(PacketHeader));
 	//
 	//mUserManager.SendToAllUser(clientIndx, (char*)&mCompressBuffer, chat.packetSize);
+	
+	//ALL_USER_CHAT_REQUEST alluUserChatRequest;
+	//memcpy_s(&alluUserChatRequest, sizeof(alluUserChatRequest), pData, dataSize);
+	//
+	//alluUserChatRequest.pakcetID = PACKET_ID::ALL_USER_CHAT_NOTIFY;
+	//alluUserChatRequest.compressType = COMPRESS_TYPE::ZLIB;
+	//alluUserChatRequest.packetSize = sizeof(alluUserChatRequest);
+	//
+	//uLongf destSize = sizeof(mCompressBuffer);
+	//int zResult = UncompressPacket((Bytef*)(mCompressBuffer + sizeof(PACKET_HEADER)),&destSize,
+	//	(Bytef*)(&alluUserChatRequest.CheckCode),sizeof(alluUserChatRequest)-sizeof(PACKET_HEADER));
+	//
+	//UncompressPacket(alluUserChatRequest.CheckCode, sizeof(alluUserChatRequest) - sizeof(PACKET_HEADER), (PacketInfo*)pData);
+	//
+	//alluUserChatRequest.packetSize = sizeof(PACKET_HEADER) + destSize;
+	//memcpy_s(mCompressBuffer,sizeof(mCompressBuffer), &alluUserChatRequest, sizeof(PACKET_HEADER));
+	
+
+
 	PACKET_HEADER packetHeader;
 	packetHeader.compressType = COMPRESS_TYPE::NONE;
 	packetHeader.packetSize = sizeof(PACKET_HEADER);
 	packetHeader.pakcetID = PACKET_ID::ALL_USER_CHAT_RESPONSE;
-	SendPacketFunc(clientIndx, (char*)&packetHeader, sizeof(packetHeader));
+	//SendPacketFunc(clientIndx, (char*)&packetHeader, sizeof(packetHeader));
 
 	PACKET_ID id = PACKET_ID::ALL_USER_CHAT_NOTIFY;
 	memcpy(pData, &id,sizeof(id));
@@ -311,6 +331,33 @@ void PacketManager::ProcessLogin(UINT32 clientIndx, char* pData, UINT32 dataSize
 		//	loginResponse.Result = false;
 		//}
 		//SendPacketFunc(clientIndx, (char*)&loginResponse, sizeof(loginResponse));
+	} while (false);
+}
+void PacketManager::ProcessLogout(UINT32 clientIndx, char* pData, UINT32 dataSize)
+{
+	do
+	{
+		LOGOUT_REQUEST* pLoginRequest = (LOGOUT_REQUEST*)pData;
+		if (pLoginRequest == nullptr)
+			break;
+		if (dataSize != sizeof(LOGOUT_REQUEST))
+			break;
+		LOGOUT_RESPONSE logoutResponse;
+		logoutResponse.Result = false;
+		User* user = nullptr;
+		user = mUserManager.GetUser(clientIndx);
+		if (user != nullptr && user->GetUserStatus() == USER_STATUS_INFO::LOBBY)
+		{
+			user->SetUserStatus(USER_STATUS_INFO::CONNECT);
+			logoutResponse.Result = true;
+		}
+
+		logoutResponse.compressType = COMPRESS_TYPE::NONE;
+		logoutResponse.packetSize = sizeof(logoutResponse);
+		logoutResponse.pakcetID = PACKET_ID::LOGOUT_RESPONSE;
+		logoutResponse.tickCount = pLoginRequest->tickCount;
+
+		SendPacketFunc(clientIndx, (char*)&logoutResponse, sizeof(logoutResponse));
 	} while (false);
 }
 void PacketManager::ProcessLoginDBResult(UINT32 clientIndx, char* pData, UINT32 dataSize)

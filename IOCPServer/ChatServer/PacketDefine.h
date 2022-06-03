@@ -78,6 +78,14 @@ struct LOGIN_RESPONSE : public PACKET_HEADER
 {
 	INT16 Result = false;
 };
+struct LOGOUT_REQUEST : public PACKET_HEADER
+{
+
+};
+struct LOGOUT_RESPONSE : public PACKET_HEADER
+{
+	INT16 Result = false;
+};
 
 typedef struct ALL_USER_CHAT_REQUEST : public PACKET_HEADER
 {

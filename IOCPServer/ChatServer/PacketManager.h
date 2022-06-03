@@ -39,6 +39,7 @@ private:
 	void ProcessSystemDisonnect(UINT32 clientIndx, char* pData, UINT32 dataSize);
 
 	void ProcessLogin(UINT32 clientIndx, char* pData, UINT32 dataSize);
+	void ProcessLogout(UINT32 clientIndx, char* pData, UINT32 dataSize);
 	void ProcessLoginDBResult(UINT32 clientIndx, char* pData, UINT32 dataSize);
 
 	void ProcessAllUserChatMessage(UINT32 clientIndx, char* pData, UINT32 dataSize);
