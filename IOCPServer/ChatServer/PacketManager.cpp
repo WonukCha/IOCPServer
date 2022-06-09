@@ -28,14 +28,22 @@ void PacketManager::Run()
 	mRedisManager.Run();
 
 	mIsRunProcessThread = true;
-	mProcessThread = std::thread([this]() {this->PacketProcess(); });
+	for (UINT32 i = 0; i < THREAD_POOL_SIZE; i++)
+	{
+		mProcessThreadPool.emplace_back([this]() {this->PacketProcess(); });
+	}
+	
 }
 void PacketManager::End()
 {
 	mIsRunProcessThread = false;
-	if (mProcessThread.joinable())
+
+	for (auto& thread : mProcessThreadPool)
 	{
-		mProcessThread.join();
+		if (thread.joinable())
+		{
+			thread.join();
+		}
 	}
 	mRedisManager.End();
 }

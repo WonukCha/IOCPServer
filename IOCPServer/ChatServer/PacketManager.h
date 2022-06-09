@@ -16,7 +16,7 @@
 
 #include "zlib.h"
 
-
+constexpr UINT32 THREAD_POOL_SIZE = 5;
 
 class PacketManager
 {
@@ -65,7 +65,8 @@ private:
 	std::queue<UINT32> mUserReceiveEventQueue;
 
 	bool mIsRunProcessThread;
-	std::thread mProcessThread;
+	//std::thread mProcessThread;
+	std::vector<std::thread> mProcessThreadPool;
 
 	Bytef mCompressBuffer[USER_BUFFER_SIZE] = {'\0'};
 
