@@ -79,7 +79,7 @@ void PacketManager::PacketProcess()
 		if (!mUserReceiveEventQueue.empty())
 		{
 			UINT32 userIndex = UINT32_MAX;
-			PacketInfo* info = nullptr;
+			PacketInfo info;
 			std::queue<UINT32> queue;
 			User* user = nullptr;
 			mUserReceiveEventQueueLock.lock();
@@ -93,14 +93,10 @@ void PacketManager::PacketProcess()
 				if (user)
 				{
 					info = user->GetPacketInfo();
-					//if (info->packetId != static_cast<UINT16>(PACKET_ID::ALL_USER_CHAT_REQUEST))
-					//{
-					//	continue;
-					//}
-					auto iter = mProcMap.find(info->packetId);
+					auto iter = mProcMap.find(info.packetId);
 					if (iter != mProcMap.end())
 					{
-						(this->*(iter->second))(info->clientNum, info->pData, info->dataSize);
+						(this->*(iter->second))(info.clientNum, info.pData, info.dataSize);
 					}
 				}
 			}

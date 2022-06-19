@@ -46,6 +46,7 @@ private:
 	stOverlappedEx	mSendOverlappedEx;
 	char mSendBuf[MAX_SOCK_SENDBUF] = { 0, };
 	RingBufferLock mSendRingbuffer;
+	std::atomic<bool> mIsSending;
 	std::mutex mSendMutex;
 
 	stOverlappedEx	mRecvOverlappedEx;

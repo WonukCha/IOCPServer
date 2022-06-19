@@ -16,7 +16,7 @@
 
 #include "zlib.h"
 
-constexpr UINT32 THREAD_POOL_SIZE = 1;
+constexpr UINT32 THREAD_POOL_SIZE = 2;
 
 class PacketManager
 {

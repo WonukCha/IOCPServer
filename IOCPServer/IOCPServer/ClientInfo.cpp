@@ -5,7 +5,7 @@ ClientInfo::ClientInfo()
 {
 	ZeroMemory(&mRecvOverlappedEx, sizeof(mRecvOverlappedEx));
 	ZeroMemory(&mAcceptContext, sizeof(mAcceptContext));
-
+	mIsSending.store(false);
 }
 ClientInfo::~ClientInfo()
 {
@@ -65,6 +65,7 @@ void ClientInfo::Close(bool bLingerOn)
 
 	setsockopt(mSocket, SOL_SOCKET, SO_LINGER, (char*)&stLinger, sizeof(stLinger));
 
+	mIsSending.store(false);
 	mIsConnect = false;
 	mLatestClosedTimeSec = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 
@@ -196,7 +197,19 @@ bool ClientInfo::SendMsg(const unsigned __int64 uiMsgSize, void* pMsg)
 	do
 	{
 		if (mSendRingbuffer.PutData(pMsg, uiMsgSize) == false)
+		{
+			std::cout << "[Error] mSendRingbuffer.PutData \r\n";
 			break;
+		}
+
+		if (mIsSending.load())
+		{
+			break;
+		}
+		else
+		{
+			mIsSending.store(true);
+		}
 
 		if (SendIO() == false)
 			break;
@@ -214,6 +227,10 @@ void ClientInfo::SendCompleted(const unsigned int uiMsgSize)
 	{
 		SendIO();
 	}
+	else
+	{
+		mIsSending.store(false);
+	}
 }
 bool ClientInfo::SendIO()
 {
@@ -228,6 +245,9 @@ bool ClientInfo::SendIO()
 
 		if (ULONG_MAX < szSendSize)
 			szSendSize = ULONG_MAX;
+
+		if (MAX_SOCK_SENDBUF < szSendSize)
+			szSendSize = MAX_SOCK_SENDBUF;
 
 		if (mSendRingbuffer.GetData(mSendBuf, szSendSize) == false)
 		{

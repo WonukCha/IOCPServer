@@ -15,7 +15,7 @@ public:
 
 	bool PushLowData(char* pData, UINT32 dwDataSize);
 
-	PacketInfo* GetPacketInfo();
+	PacketInfo GetPacketInfo();
 	void SetUserStatus(USER_STATUS_INFO status);
 	USER_STATUS_INFO GetUserStatus();
 
@@ -40,6 +40,5 @@ private:
 	std::string mID;
 
 	RingBufferLock mRecvBuffer;
-	PacketInfo mStagePacketInfo;
-	char mStageBuffer[USER_BUFFER_SIZE] = {'\0',};
+	
 };

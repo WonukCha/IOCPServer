@@ -23,7 +23,7 @@ void ChatServer::Run(const unsigned int MaxClientCount)
 	{
 		if (SendMsg(clientIndex, packetSize, pSendPacket) == false)
 		{
-			std::cout << "sendPacketFunc Faile\r\n";
+			//std::cout << "sendPacketFunc Faile\r\n";
 		}
 	};
 	mPacketManager.SendPacketFunc = sendPacketFunc;

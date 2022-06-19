@@ -15,7 +15,7 @@
 #include "define.h"
 
 
-constexpr UINT MAX_WORK_THREAD_COUNT = 5;
+constexpr UINT MAX_WORK_THREAD_COUNT = 6;
 
 class IOCPServer
 {

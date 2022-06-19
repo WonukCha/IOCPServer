@@ -2,7 +2,7 @@
 #include <mutex>
 
 //constexpr size_t MAX_BUFFER_SIZE = 4096000;
-constexpr size_t MAX_BUFFER_SIZE = 40960;
+constexpr size_t MAX_BUFFER_SIZE = 409600;
 constexpr size_t LAST_BUFFER_INDEX = MAX_BUFFER_SIZE - 1;
 
 // ring buffer options

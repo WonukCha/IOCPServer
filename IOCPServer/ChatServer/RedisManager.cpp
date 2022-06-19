@@ -73,8 +73,6 @@ void RedisManager::RedisProcess()
 		if (IsIdle)
 			std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
-
-
 }
 bool RedisManager::PushRequestTesk(REDIS_REQUEST_LOGIN& redisRequest)
 {

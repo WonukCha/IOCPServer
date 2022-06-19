@@ -5,7 +5,6 @@ void User::Init()
 	mUserStatus = USER_STATUS_INFO::NONE;
 	mID  = "";
 	mRecvBuffer.Clear();
-	memset(mStageBuffer, 0, sizeof(mStageBuffer));
 }
 bool User::PushLowData(char* pData, UINT32 dwDataSize)
 {
@@ -19,8 +18,9 @@ USER_STATUS_INFO User::GetUserStatus()
 {
 	return mUserStatus;
 }
-PacketInfo* User::GetPacketInfo()
+PacketInfo User::GetPacketInfo()
 {
+	PacketInfo stagePacketInfo;
 	do
 	{
 		//memset(&mStagePacketInfo, 0, sizeof(mStagePacketInfo));
@@ -64,17 +64,18 @@ PacketInfo* User::GetPacketInfo()
 		//	}
 		//	break;
 		//}
+		char stageBuffer[USER_BUFFER_SIZE] = { '\0', };
 
-		mRecvBuffer.GetData(mStageBuffer, header.packetSize, rbuf_opt_e::RBUF_CLEAR);
-		mStagePacketInfo.dataSize = header.packetSize;
+		mRecvBuffer.GetData(stageBuffer, header.packetSize, rbuf_opt_e::RBUF_CLEAR);
+		stagePacketInfo.dataSize = header.packetSize;
 
-		mStagePacketInfo.clientNum = GetUserIndex();
-		mStagePacketInfo.dataSize = header.packetSize;
-		mStagePacketInfo.packetId = static_cast<UINT16>(header.pakcetID);
-		mStagePacketInfo.pData = mStageBuffer;
+		stagePacketInfo.clientNum = GetUserIndex();
+		stagePacketInfo.dataSize = header.packetSize;
+		stagePacketInfo.packetId = static_cast<UINT16>(header.pakcetID);
+		stagePacketInfo.pData = stageBuffer;
 	} while (false);
 
-	return &mStagePacketInfo;
+	return stagePacketInfo;
 }
 void User::SetUserIndex(UINT32 userIndex)
 {
