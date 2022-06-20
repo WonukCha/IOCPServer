@@ -64,7 +64,6 @@ PacketInfo User::GetPacketInfo()
 		//	}
 		//	break;
 		//}
-		char stageBuffer[USER_BUFFER_SIZE] = { '\0', };
 
 		mRecvBuffer.GetData(stageBuffer, header.packetSize, rbuf_opt_e::RBUF_CLEAR);
 		stagePacketInfo.dataSize = header.packetSize;
