@@ -40,5 +40,6 @@ private:
 	std::string mID;
 
 	RingBufferLock mRecvBuffer;
+	char stageBuffer[USER_BUFFER_SIZE] = { '\0', };
 	
 };
